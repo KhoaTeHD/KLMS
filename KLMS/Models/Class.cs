@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace KLMS.Models
 {
@@ -18,6 +19,13 @@ namespace KLMS.Models
         [DataType(DataType.DateTime)]
         private DateTime LastModified { get; set; }
 
-        private int TeacherId;
+        private string? TeacherId;
+
+        [ForeignKey("TeacherId")]
+        public User? Teacher { get; set; }
+
+        public ICollection<Lecture>? Lectures { get; set; }
+
+        public ICollection<User>? Students { get; set; }
     }
 }

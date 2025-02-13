@@ -1,4 +1,6 @@
-﻿namespace KLMS.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace KLMS.Models
 {
     public class Lecture
     {
@@ -11,5 +13,10 @@
         public DateTime CreatedDate { get; set; }
 
         public DateTime LastModified { get; set; }
+
+        public long ClassId { get; set; }
+
+        [ForeignKey("ClassId")]
+        public Class Class { get; set; }
     }
 }
