@@ -19,13 +19,14 @@ namespace KLMS.Models
         [DataType(DataType.DateTime)]
         private DateTime LastModified { get; set; }
 
-        private string? TeacherId;
+        public string? TeacherId { get; set; }
 
         [ForeignKey("TeacherId")]
+        [InverseProperty("ClassesTaught")]
         public User? Teacher { get; set; }
 
         public ICollection<Lecture>? Lectures { get; set; }
 
-        public ICollection<User>? Students { get; set; }
+        public ICollection<User> Students { get; set; } = new List<User>();
     }
 }

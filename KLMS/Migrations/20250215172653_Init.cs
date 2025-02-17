@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace KLMS.Migrations
 {
     /// <inheritdoc />
-    public partial class Create : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -16,7 +16,7 @@ namespace KLMS.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "AspNetRoles",
+                name: "Roles",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "varchar(255)", nullable: false)
@@ -30,12 +30,12 @@ namespace KLMS.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetRoles", x => x.Id);
+                    table.PrimaryKey("PK_Roles", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "AspNetUsers",
+                name: "Users",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "varchar(255)", nullable: false)
@@ -65,12 +65,12 @@ namespace KLMS.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                    table.PrimaryKey("PK_Users", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "AspNetRoleClaims",
+                name: "RoleClaims",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -84,18 +84,40 @@ namespace KLMS.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetRoleClaims", x => x.Id);
+                    table.PrimaryKey("PK_RoleClaims", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
+                        name: "FK_RoleClaims_Roles_RoleId",
                         column: x => x.RoleId,
-                        principalTable: "AspNetRoles",
+                        principalTable: "Roles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "AspNetUserClaims",
+                name: "Classes",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    ClassName = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    TeacherId = table.Column<string>(type: "varchar(255)", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Classes", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Classes_Users_TeacherId",
+                        column: x => x.TeacherId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "UserClaims",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -109,23 +131,23 @@ namespace KLMS.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetUserClaims", x => x.Id);
+                    table.PrimaryKey("PK_UserClaims", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AspNetUserClaims_AspNetUsers_UserId",
+                        name: "FK_UserClaims_Users_UserId",
                         column: x => x.UserId,
-                        principalTable: "AspNetUsers",
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "AspNetUserLogins",
+                name: "UserLogins",
                 columns: table => new
                 {
-                    LoginProvider = table.Column<string>(type: "varchar(128)", maxLength: 128, nullable: false)
+                    LoginProvider = table.Column<string>(type: "varchar(255)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    ProviderKey = table.Column<string>(type: "varchar(128)", maxLength: 128, nullable: false)
+                    ProviderKey = table.Column<string>(type: "varchar(255)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     ProviderDisplayName = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
@@ -134,18 +156,18 @@ namespace KLMS.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetUserLogins", x => new { x.LoginProvider, x.ProviderKey });
+                    table.PrimaryKey("PK_UserLogins", x => new { x.LoginProvider, x.ProviderKey });
                     table.ForeignKey(
-                        name: "FK_AspNetUserLogins_AspNetUsers_UserId",
+                        name: "FK_UserLogins_Users_UserId",
                         column: x => x.UserId,
-                        principalTable: "AspNetUsers",
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "AspNetUserRoles",
+                name: "UserRoles",
                 columns: table => new
                 {
                     UserId = table.Column<string>(type: "varchar(255)", nullable: false)
@@ -155,81 +177,148 @@ namespace KLMS.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetUserRoles", x => new { x.UserId, x.RoleId });
+                    table.PrimaryKey("PK_UserRoles", x => new { x.UserId, x.RoleId });
                     table.ForeignKey(
-                        name: "FK_AspNetUserRoles_AspNetRoles_RoleId",
+                        name: "FK_UserRoles_Roles_RoleId",
                         column: x => x.RoleId,
-                        principalTable: "AspNetRoles",
+                        principalTable: "Roles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_AspNetUserRoles_AspNetUsers_UserId",
+                        name: "FK_UserRoles_Users_UserId",
                         column: x => x.UserId,
-                        principalTable: "AspNetUsers",
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "AspNetUserTokens",
+                name: "UserTokens",
                 columns: table => new
                 {
                     UserId = table.Column<string>(type: "varchar(255)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    LoginProvider = table.Column<string>(type: "varchar(128)", maxLength: 128, nullable: false)
+                    LoginProvider = table.Column<string>(type: "varchar(255)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Name = table.Column<string>(type: "varchar(128)", maxLength: 128, nullable: false)
+                    Name = table.Column<string>(type: "varchar(255)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Value = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetUserTokens", x => new { x.UserId, x.LoginProvider, x.Name });
+                    table.PrimaryKey("PK_UserTokens", x => new { x.UserId, x.LoginProvider, x.Name });
                     table.ForeignKey(
-                        name: "FK_AspNetUserTokens_AspNetUsers_UserId",
+                        name: "FK_UserTokens_Users_UserId",
                         column: x => x.UserId,
-                        principalTable: "AspNetUsers",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "ClassStudents",
+                columns: table => new
+                {
+                    ClassesId = table.Column<long>(type: "bigint", nullable: false),
+                    StudentsId = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClassStudents", x => new { x.ClassesId, x.StudentsId });
+                    table.ForeignKey(
+                        name: "FK_ClassStudents_Classes_ClassesId",
+                        column: x => x.ClassesId,
+                        principalTable: "Classes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ClassStudents_Users_StudentsId",
+                        column: x => x.StudentsId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Lectures",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Title = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Description = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    CreatedDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    LastModified = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    ClassId = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Lectures", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Lectures_Classes_ClassId",
+                        column: x => x.ClassId,
+                        principalTable: "Classes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetRoleClaims_RoleId",
-                table: "AspNetRoleClaims",
+                name: "IX_Classes_TeacherId",
+                table: "Classes",
+                column: "TeacherId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClassStudents_StudentsId",
+                table: "ClassStudents",
+                column: "StudentsId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Lectures_ClassId",
+                table: "Lectures",
+                column: "ClassId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RoleClaims_RoleId",
+                table: "RoleClaims",
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
                 name: "RoleNameIndex",
-                table: "AspNetRoles",
+                table: "Roles",
                 column: "NormalizedName",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetUserClaims_UserId",
-                table: "AspNetUserClaims",
+                name: "IX_UserClaims_UserId",
+                table: "UserClaims",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetUserLogins_UserId",
-                table: "AspNetUserLogins",
+                name: "IX_UserLogins_UserId",
+                table: "UserLogins",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetUserRoles_RoleId",
-                table: "AspNetUserRoles",
+                name: "IX_UserRoles_RoleId",
+                table: "UserRoles",
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
                 name: "EmailIndex",
-                table: "AspNetUsers",
+                table: "Users",
                 column: "NormalizedEmail");
 
             migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
-                table: "AspNetUsers",
+                table: "Users",
                 column: "NormalizedUserName",
                 unique: true);
         }
@@ -238,25 +327,34 @@ namespace KLMS.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "AspNetRoleClaims");
+                name: "ClassStudents");
 
             migrationBuilder.DropTable(
-                name: "AspNetUserClaims");
+                name: "Lectures");
 
             migrationBuilder.DropTable(
-                name: "AspNetUserLogins");
+                name: "RoleClaims");
 
             migrationBuilder.DropTable(
-                name: "AspNetUserRoles");
+                name: "UserClaims");
 
             migrationBuilder.DropTable(
-                name: "AspNetUserTokens");
+                name: "UserLogins");
 
             migrationBuilder.DropTable(
-                name: "AspNetRoles");
+                name: "UserRoles");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "UserTokens");
+
+            migrationBuilder.DropTable(
+                name: "Classes");
+
+            migrationBuilder.DropTable(
+                name: "Roles");
+
+            migrationBuilder.DropTable(
+                name: "Users");
         }
     }
 }

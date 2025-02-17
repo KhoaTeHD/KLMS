@@ -1,10 +1,15 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using KLMS.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace KLMS.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext<User>
     {
+        public DbSet<Class> Classes { get; set; }
+        public DbSet<Lecture> Lectures { get; set; }
+        public DbSet<User> Users { get; set; }
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
@@ -25,6 +30,11 @@ namespace KLMS.Data
                     }
                 }
             }
+
+            builder.Entity<Class>()
+                .HasMany(c => c.Students)
+                .WithMany(u => u.Classes)
+                .UsingEntity(j => j.ToTable("ClassStudents"));
         }
     }
 }
