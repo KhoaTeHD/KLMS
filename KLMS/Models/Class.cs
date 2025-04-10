@@ -9,15 +9,17 @@ namespace KLMS.Models
         public long Id { get; set; }
 
         [Required]
+        [StringLength(200)]
         public string ClassName { get; set; }
 
-        private string Description { get; set; }
+        [StringLength(500)]
+        public string Description { get; set; }
 
         [DataType(DataType.Date)]
-        private DateOnly CreatedDate { get; set; }
+        public DateOnly CreatedDate { get; set; }
 
         [DataType(DataType.DateTime)]
-        private DateTime LastModified { get; set; }
+        public DateTime LastModified { get; set; }
 
         public string? TeacherId { get; set; }
 

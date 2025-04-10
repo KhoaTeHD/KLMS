@@ -1,4 +1,5 @@
 ﻿using KLMS.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,7 +9,6 @@ namespace KLMS.Data
     {
         public DbSet<Class> Classes { get; set; }
         public DbSet<Lecture> Lectures { get; set; }
-        public DbSet<User> Users { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -35,6 +35,24 @@ namespace KLMS.Data
                 .HasMany(c => c.Students)
                 .WithMany(u => u.Classes)
                 .UsingEntity(j => j.ToTable("ClassStudents"));
+        }
+
+        public async Task SeedUsers(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
+        {
+            var adminUser = new User
+            {
+                UserName = "admin",
+                Email = "dangkhoa014@gmail.com",
+                FullName = "Quản trị viên"
+            };
+
+            var result = await userManager.CreateAsync(adminUser, "Admin@123");
+            if (result.Succeeded)
+            {
+                var role = new IdentityRole("Admin");
+                await roleManager.CreateAsync(role);
+                await userManager.AddToRoleAsync(adminUser, "Admin");
+            }
         }
     }
 }
