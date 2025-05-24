@@ -1,42 +1,121 @@
 ﻿@model IEnumerable<KLMS.Models.Class>
-
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Danh Sách Lớp Học";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    // Mảng màu để tạo màu ngẫu nhiên cho card
+    string[] cardColors = new[] { "primary", "success", "danger", "warning", "info" };
 }
 
-<h1>Index</h1>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mb-0">Danh Sách Lớp Học</h1>
+        <div class="d-flex align-items-center">
+            <div class="dropdown me-2">
+                <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-sort-alpha-down"></i> Sắp xếp
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="sortDropdown">
+                    <li><a class="dropdown-item" href="?sort=asc">A-Z</a></li>
+                    <li><a class="dropdown-item" href="?sort=desc">Z-A</a></li>
+                </ul>
+            </div>
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Tạo Lớp Mới
+            </a>
+        </div>
+    </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.ClassName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Teacher)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.ClassName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Teacher.Id)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            Chưa có lớp học nào. Hãy tạo lớp mới để bắt đầu!
+        </div>
+    }
+    else
+    {
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            @foreach (var item in Model)
+            {
+                // Tạo index ngẫu nhiên để chọn màu
+                var colorIndex = item.Id % cardColors.Length;
+                var cardColor = cardColors[colorIndex];
+
+                <div class="col">
+                    <div class="card h-100 shadow-sm hover-shadow">
+                        <div class="card-header bg-@cardColor bg-opacity-25 text-@cardColor d-flex justify-content-between align-items-center">
+                            <h5 class="card-title mb-0">@item.ClassName</h5>
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-outline-secondary border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item" asp-action="Edit" asp-route-id="@item.Id"><i class="bi bi-pencil-square me-2"></i>Chỉnh sửa</a></li>
+                                    <li><a class="dropdown-item" asp-action="Details" asp-route-id="@item.Id"><i class="bi bi-info-circle me-2"></i>Chi tiết</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item text-danger" asp-action="Delete" asp-route-id="@item.Id"><i class="bi bi-trash me-2"></i>Xóa</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="text-center mb-3">
+                                <div class="class-icon bg-@cardColor bg-opacity-10 text-@cardColor mx-auto">
+                                    <i class="bi bi-book"></i>
+                                </div>
+                            </div>
+                            <div class="card-text">
+                                <div class="d-flex mb-2">
+                                    <span class="text-muted me-2"><i class="bi bi-person-circle"></i></span>
+                                    <span>@(item.Teacher != null ? item.Teacher.FullName : "Chưa phân công giáo viên")</span>
+                                </div>
+                                <div class="d-flex mb-2">
+                                    <span class="text-muted me-2"><i class="bi bi-calendar-check"></i></span>
+                                            <span>@(item.Students?.Count() ?? 0) học sinh</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent border-top-0">
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-@cardColor w-100">
+                                <i class="bi bi-arrow-right-circle me-1"></i> Xem lớp học
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@section Styles {
+    <style>
+        .hover-shadow {
+            transition: all 0.3s ease;
+        }
+
+            .hover-shadow:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+            }
+
+        .class-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+        }
+    </style>
 }
-    </tbody>
-</table>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('.card').hover(
+                function () { $(this).addClass('shadow'); },
+                function () { $(this).removeClass('shadow'); }
+            );
+        });
+    </script>
+}

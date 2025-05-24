@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using KLMS.Data;
 using KLMS.Models;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace KLMS.Controllers
 {
@@ -20,10 +22,34 @@ namespace KLMS.Controllers
         }
 
         // GET: Class
+        [Authorize]
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Classes.Include(c => c.Teacher);
-            return View(await applicationDbContext.ToListAsync());
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+
+            IQueryable<Class> classesQuery = _context.Classes.Include(c => c.Teacher);
+
+            //var applicationDbContext = _context.Classes.Include(c => c.Teacher);
+
+            // Admin: Hiển thị tất cả lớp học
+            if (User.IsInRole("Administrator"))
+            {
+                // Không cần lọc
+            }
+            // Teacher: Chỉ hiển thị lớp mà giáo viên này dạy
+            else if (User.IsInRole("Teacher"))
+            {
+                classesQuery = classesQuery.Where(c => c.TeacherId == userId);
+            }
+            // Student: Chỉ hiển thị lớp mà học sinh này tham gia
+            else if (User.IsInRole("Student"))
+            {
+                classesQuery = classesQuery
+                    .Where(c => c.Students.Any(cs => cs.Id == userId));
+            }
+
+            return View(await classesQuery.ToListAsync());
         }
 
         // GET: Class/Details/5
@@ -57,10 +83,14 @@ namespace KLMS.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,ClassName,TeacherId")] Class @class)
+        public async Task<IActionResult> Create([Bind("Id,ClassName, Description,TeacherId")] Class @class)
         {
             if (ModelState.IsValid)
             {
+                // Gán các giá trị mặc định nếu cần
+                @class.CreatedDate = DateOnly.FromDateTime(DateTime.Now);
+                @class.LastModified = DateTime.Now;
+
                 _context.Add(@class);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
