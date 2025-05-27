@@ -1,0 +1,701 @@
+﻿@model KLMS.Models.Class
+@{
+    ViewData["Title"] = Model.ClassName;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    // Lấy role của người dùng từ ViewBag
+    var userRole = ViewBag.UserRole as string;
+    
+    var isTeacherOrAdmin = userRole?.ToLower() == "teacher" || userRole?.ToLower() == "admin";
+
+    // Kiểm tra tab active
+    var activeTab = ViewBag.ActiveTab as string ?? "lectures";
+}
+
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="mb-1">@Model.ClassName</h1>
+            <p class="text-muted mb-0">
+                <i class="bi bi-calendar3"></i> Ngày tạo: @Model.CreatedDate.ToString("dd/MM/yyyy") |
+                <i class="bi bi-clock-history"></i> Cập nhật: @Model.LastModified.ToString("dd/MM/yyyy HH:mm")
+            </p>
+        </div>
+        <div>
+            @if (isTeacherOrAdmin)
+            {
+                <div class="btn-group">
+                    <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-gear"></i> Quản lý
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                            <a class="dropdown-item" asp-action="Edit" asp-route-id="@Model.Id">
+                                <i class="bi bi-pencil-square me-2"></i>Chỉnh sửa lớp
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#addLectureModal">
+                                <i class="bi bi-file-earmark-plus me-2"></i>Thêm bài giảng
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item text-danger" href="#" data-bs-toggle="modal" data-bs-target="#deleteClassModal_@Model.Id">
+                                <i class="bi bi-trash me-2"></i>Xóa lớp học
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <!-- Tabs -->
+            <ul class="nav nav-tabs mb-4" id="classTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link @(activeTab == "lectures" ? "active" : "")" id="lectures-tab" data-bs-toggle="tab" data-bs-target="#lectures" type="button" role="tab" aria-controls="lectures" aria-selected="@(activeTab == "lectures" ? "true" : "false")">
+                        <i class="bi bi-journal-text me-1"></i> Bài giảng
+                    </button>
+                </li>
+                @if (isTeacherOrAdmin)
+                {
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link @(activeTab == "students" ? "active" : "")" id="students-tab" data-bs-toggle="tab" data-bs-target="#students" type="button" role="tab" aria-controls="students" aria-selected="@(activeTab == "students" ? "true" : "false")">
+                            <i class="bi bi-people me-1"></i> Học sinh
+                        </button>
+                    </li>
+                }
+                @if (userRole == "teacher")
+                {
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link @(activeTab == "assignments" ? "active" : "")" id="assignments-tab" data-bs-toggle="tab" data-bs-target="#assignments" type="button" role="tab" aria-controls="assignments" aria-selected="@(activeTab == "assignments" ? "true" : "false")">
+                            <i class="bi bi-clipboard-check me-1"></i> Bài tập
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link @(activeTab == "tests" ? "active" : "")" id="tests-tab" data-bs-toggle="tab" data-bs-target="#tests" type="button" role="tab" aria-controls="tests" aria-selected="@(activeTab == "tests" ? "true" : "false")">
+                            <i class="bi bi-card-checklist me-1"></i> Kiểm tra
+                        </button>
+                    </li>
+                }
+            </ul>
+
+            <!-- Tab Content -->
+            <div class="tab-content" id="classTabContent">
+                <!-- Bài giảng Tab -->
+                <div class="tab-pane fade @(activeTab == "lectures" ? "show active" : "")" id="lectures" role="tabpanel" aria-labelledby="lectures-tab">
+                    <div class="row">
+                        <!-- Danh sách bài giảng (Sidebar bên trái) -->
+                        <div class="col-md-3">
+                            <div class="card shadow-sm">
+                                <div class="card-header bg-light">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h5 class="mb-0">Danh sách bài giảng</h5>
+                                        @if (Model.Lectures?.Count > 0)
+                                        {
+                                            <span class="badge bg-primary">@Model.Lectures.Count</span>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="card-body p-0">
+                                    @if (Model.Lectures == null || !Model.Lectures.Any())
+                                    {
+                                        <div class="p-4 text-center">
+                                            <div class="text-muted mb-3">
+                                                <i class="bi bi-journal-x" style="font-size: 2rem;"></i>
+                                            </div>
+                                            <p>Chưa có bài giảng nào trong lớp học này.</p>
+                                            @if (isTeacherOrAdmin)
+                                            {
+                                                <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addLectureModal">
+                                                    <i class="bi bi-plus-circle me-1"></i> Thêm bài giảng
+                                                </button>
+                                            }
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="list-group list-group-flush lectures-list" style="max-height: 500px; overflow-y: auto;">
+                                            @foreach (var lecture in Model.Lectures)
+                                            {
+                                                <a href="#" class="list-group-item list-group-item-action lecture-item"
+                                                   data-lecture-id="@lecture.Id"
+                                                   onclick="loadLecture(@lecture.Id)">
+                                                    <div class="d-flex w-100 justify-content-between">
+                                                        <h6 class="mb-1">@lecture.Title</h6>
+                                                    </div>
+                                                    <small class="text-muted">
+                                                        <i class="bi bi-calendar3"></i> @lecture.CreatedDate.ToString("dd/MM/yyyy")
+                                                    </small>
+                                                </a>
+                                            }
+                                            @if (isTeacherOrAdmin)
+                                            {
+                                                <div class="p-3 text-center">
+                                                    <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addLectureModal">
+                                                        <i class="bi bi-plus-circle me-1"></i> Thêm bài giảng
+                                                    </button>
+                                                </div>
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Nội dung bài giảng (bên phải) -->
+                        <div class="col-md-9">
+                            <div class="card shadow-sm lecture-content-area">
+                                <div class="card-body lecture-content-placeholder text-center p-5">
+                                    <div class="py-5">
+                                        <div class="text-muted mb-4">
+                                            <i class="bi bi-journal-arrow-up" style="font-size: 4rem;"></i>
+                                        </div>
+                                        <h4>Hướng dẫn xem bài giảng</h4>
+                                        <p class="text-muted">Vui lòng chọn một bài giảng từ danh sách bên trái để xem nội dung.</p>
+                                    </div>
+                                </div>
+                                <div class="card-body lecture-content d-none">
+                                    <!-- Nội dung bài giảng sẽ được tải bằng AJAX và hiển thị ở đây -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Học sinh Tab (chỉ hiển thị cho giáo viên và admin) -->
+                @if (isTeacherOrAdmin)
+                {
+                    <div class="tab-pane fade @(activeTab == "students" ? "show active" : "")" id="students" role="tabpanel" aria-labelledby="students-tab">
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-light">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="mb-0">Danh sách học sinh</h5>
+                                    <div>
+                                        <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addStudentModal">
+                                            <i class="bi bi-person-plus me-1"></i> Thêm học sinh
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <!-- Ô tìm kiếm -->
+                                <div class="mb-4">
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
+                                        <input type="text" id="studentSearchInput" class="form-control" placeholder="Tìm kiếm học sinh..." aria-label="Tìm kiếm học sinh">
+                                    </div>
+                                </div>
+
+                                <!-- Danh sách học sinh -->
+                                @if (Model.Students == null || !Model.Students.Any())
+                                {
+                                    <div class="text-center py-5">
+                                        <div class="text-muted mb-3">
+                                            <i class="bi bi-people" style="font-size: 2rem;"></i>
+                                        </div>
+                                        <p>Chưa có học sinh nào trong lớp học này.</p>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th scope="col" style="width: 50px;">#</th>
+                                                    <th scope="col">Họ và tên</th>
+                                                    <th scope="col">Email</th>
+                                                    <th scope="col">Địa chỉ</th>
+                                                    <th scope="col" class="text-end">Thao tác</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="studentsList">
+                                                @{
+                                                    int index = 1;
+                                                }
+                                                @foreach (var student in Model.Students)
+                                                {
+                                                    <tr class="student-item">
+                                                        <th scope="row">@(index++)</th>
+                                                        <td>@student.FullName</td>
+                                                        <td>@student.Email</td>
+                                                        <td>@(student.Address ?? "N/A")</td>
+                                                        <td class="text-end">
+                                                            <button class="btn btn-sm btn-outline-danger" onclick="removeStudent('@student.Id')">
+                                                                <i class="bi bi-person-dash"></i> Xóa
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <!-- Bài tập Tab (chỉ cho giáo viên) -->
+                @if (userRole == "teacher")
+                {
+                    <div class="tab-pane fade @(activeTab == "assignments" ? "show active" : "")" id="assignments" role="tabpanel" aria-labelledby="assignments-tab">
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-light">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="mb-0">Bài tập</h5>
+                                    <button class="btn btn-sm btn-primary">
+                                        <i class="bi bi-plus-circle me-1"></i> Tạo bài tập mới
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="text-center py-5">
+                                    <div class="text-muted mb-3">
+                                        <i class="bi bi-clipboard" style="font-size: 2rem;"></i>
+                                    </div>
+                                    <p>Chức năng này đang được phát triển.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <!-- Bài kiểm tra Tab (chỉ cho giáo viên) -->
+                @if (userRole == "teacher")
+                {
+                    <div class="tab-pane fade @(activeTab == "tests" ? "show active" : "")" id="tests" role="tabpanel" aria-labelledby="tests-tab">
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-light">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="mb-0">Bài kiểm tra</h5>
+                                    <button class="btn btn-sm btn-primary">
+                                        <i class="bi bi-plus-circle me-1"></i> Tạo bài kiểm tra mới
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="text-center py-5">
+                                    <div class="text-muted mb-3">
+                                        <i class="bi bi-card-checklist" style="font-size: 2rem;"></i>
+                                    </div>
+                                    <p>Chức năng này đang được phát triển.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal Thêm Bài Giảng -->
+@if (isTeacherOrAdmin)
+{
+    <div class="modal fade" id="addLectureModal" tabindex="-1" aria-labelledby="addLectureModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-primary bg-opacity-25 text-primary">
+                    <h5 class="modal-title" id="addLectureModalLabel">Thêm bài giảng mới</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form asp-action="AddLecture" asp-route-classId="@Model.Id" method="post" enctype="multipart/form-data">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="lectureTitle" class="form-label">Tiêu đề bài giảng</label>
+                            <input type="text" class="form-control" id="lectureTitle" name="Title" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="lectureDescription" class="form-label">Mô tả</label>
+                            <textarea class="form-control" id="lectureDescription" name="Description" rows="3"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="lectureFile" class="form-label">Tải lên tệp bài giảng (PDF, PPT)</label>
+                            <input class="form-control" type="file" id="lectureFile" name="LectureFile" accept=".pdf,.ppt,.pptx">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button type="submit" class="btn btn-primary">Thêm bài giảng</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Thêm Học Sinh -->
+    <div class="modal fade" id="addStudentModal" tabindex="-1" aria-labelledby="addStudentModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-primary bg-opacity-25 text-primary">
+                    <h5 class="modal-title" id="addStudentModalLabel">Thêm học sinh vào lớp</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="searchStudent" class="form-label">Tìm kiếm học sinh</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="searchStudent" placeholder="Nhập tên hoặc email học sinh...">
+                            <button class="btn btn-outline-primary" type="button" id="searchStudentBtn">
+                                <i class="bi bi-search"></i> Tìm
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="searchResults" class="mt-3 d-none">
+                        <h6>Kết quả tìm kiếm:</h6>
+                        <div class="list-group" id="studentsSearchResults">
+                            <!-- Kết quả tìm kiếm sẽ được hiển thị ở đây -->
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Bao gồm modal xác nhận xóa lớp học -->
+// await Html.PartialAsync("_DeleteClassModal", Model)
+
+@section Styles {
+    <style>
+        .lecture-item.active {
+            background-color: rgba(var(--bs-primary-rgb), 0.1);
+            border-left: 3px solid var(--bs-primary);
+        }
+
+        .lectures-list {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .lecture-content-area {
+            min-height: 500px;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        // Tìm kiếm học sinh trong danh sách
+        $(document).ready(function () {
+            // Tìm kiếm học sinh trong danh sách hiện tại
+            $("#studentSearchInput").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $(".student-item").filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+
+            // Tìm kiếm học sinh để thêm vào lớp
+            $("#searchStudentBtn").click(function () {
+                var query = $("#searchStudent").val();
+                if (query.length < 2) {
+                    alert("Vui lòng nhập ít nhất 2 ký tự để tìm kiếm");
+                    return;
+                }
+
+                // Gửi AJAX request để tìm kiếm học sinh
+                $.ajax({
+                    url: '@Url.Action("SearchStudents", "Classes")',
+                    type: 'GET',
+                    data: {
+                        query: query,
+                        classId: @Model.Id
+                            },
+                    success: function (data) {
+                        $("#searchResults").removeClass("d-none");
+                        renderSearchResults(data);
+                    },
+                    error: function (error) {
+                        console.error("Lỗi khi tìm kiếm học sinh:", error);
+                        alert("Đã xảy ra lỗi khi tìm kiếm. Vui lòng thử lại sau.");
+                    }
+                });
+            });
+
+            // Hiển thị kết quả tìm kiếm học sinh
+            function renderSearchResults(students) {
+                var resultsContainer = $("#studentsSearchResults");
+                resultsContainer.empty();
+
+                if (students.length === 0) {
+                    resultsContainer.append('<div class="alert alert-info">Không tìm thấy học sinh nào phù hợp với từ khóa.</div>');
+                    return;
+                }
+
+                students.forEach(function (student) {
+                    var item = `
+                                <div class="list-group-item">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">${student.fullName}</h6>
+                                            <small class="text-muted">${student.email}</small>
+                                        </div>
+                                        <button class="btn btn-sm btn-primary add-student-btn" data-student-id="${student.id}">
+                                            <i class="bi bi-plus-circle"></i> Thêm
+                                        </button>
+                                    </div>
+                                </div>
+                            `;
+                    resultsContainer.append(item);
+                });
+
+                // Xử lý sự kiện khi nhấn nút thêm học sinh
+                $(".add-student-btn").click(function () {
+                    var studentId = $(this).data("student-id");
+                    addStudentToClass(studentId);
+                });
+            }
+
+            // Thêm học sinh vào lớp
+            function addStudentToClass(studentId) {
+                $.ajax({
+                    url: '@Url.Action("AddStudentToClass", "Classes")',
+                    type: 'POST',
+                    data: {
+                        studentId: studentId,
+                        classId: @Model.Id
+                            },
+                    success: function (response) {
+                        if (response.success) {
+                            // Reload lại trang sau khi thêm thành công
+                            location.reload();
+                        } else {
+                            alert(response.message || "Có lỗi xảy ra khi thêm học sinh vào lớp.");
+                        }
+                    },
+                    error: function (error) {
+                        console.error("Lỗi khi thêm học sinh:", error);
+                        alert("Đã xảy ra lỗi khi thêm học sinh. Vui lòng thử lại sau.");
+                    }
+                });
+            }
+        });
+
+        // Xử lý xóa học sinh khỏi lớp
+        function removeStudent(studentId) {
+            if (confirm("Bạn có chắc chắn muốn xóa học sinh này khỏi lớp học?")) {
+                $.ajax({
+                    url: '@Url.Action("RemoveStudentFromClass", "Classes")',
+                    type: 'POST',
+                    data: {
+                        studentId: studentId,
+                        classId: @Model.Id
+                            },
+                    success: function (response) {
+                        if (response.success) {
+                            // Reload lại trang sau khi xóa thành công
+                            location.reload();
+                        } else {
+                            alert(response.message || "Có lỗi xảy ra khi xóa học sinh khỏi lớp.");
+                        }
+                    },
+                    error: function (error) {
+                        console.error("Lỗi khi xóa học sinh:", error);
+                        alert("Đã xảy ra lỗi khi xóa học sinh. Vui lòng thử lại sau.");
+                    }
+                });
+            }
+        }
+
+        // Tải nội dung bài giảng
+        function loadLecture(lectureId) {
+            // Đánh dấu bài giảng đang chọn
+            $(".lecture-item").removeClass("active");
+            $(".lecture-item[data-lecture-id='" + lectureId + "']").addClass("active");
+
+            // Hiển thị loading
+            $(".lecture-content-placeholder").addClass("d-none");
+            $(".lecture-content").removeClass("d-none").html('<div class="text-center py-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div><p class="mt-3">Đang tải nội dung bài giảng...</p></div>');
+
+            // Gửi AJAX request để lấy nội dung bài giảng
+            $.ajax({
+                url: '@Url.Action("GetLectureContent", "Classes")',
+                type: 'GET',
+                data: { lectureId: lectureId },
+                success: function (data) {
+                    renderLectureContent(data);
+                },
+                error: function (error) {
+                    console.error("Lỗi khi tải nội dung bài giảng:", error);
+                    $(".lecture-content").html('<div class="alert alert-danger">Đã xảy ra lỗi khi tải nội dung bài giảng. Vui lòng thử lại sau.</div>');
+                }
+            });
+        }
+
+        // Hiển thị nội dung bài giảng
+        function renderLectureContent(lecture) {
+            var content = `
+                        <div class="d-flex justify-content-between align-items-start mb-4">
+                            <div>
+                                <h3>${lecture.title}</h3>
+                                <p class="text-muted">
+                                    <i class="bi bi-calendar3"></i> Ngày tạo: ${lecture.createdDate} |
+                                    <i class="bi bi-clock-history"></i> Cập nhật: ${lecture.lastModified}
+                                </p>
+                            </div>
+        @if (isTeacherOrAdmin)
+        {
+                                    <div class="dropdown">
+                                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="bi bi-three-dots-vertical"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li><a class="dropdown-item" href="#" onclick="editLecture(${lecture.id})"><i class="bi bi-pencil-square me-2"></i>Chỉnh sửa</a></li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li><a class="dropdown-item text-danger" href="#" onclick="deleteLecture(${lecture.id})"><i class="bi bi-trash me-2"></i>Xóa</a></li>
+                                        </ul>
+                                    </div>
+        }
+                        </div>
+
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <h5>Mô tả bài giảng</h5>
+                                <p>${lecture.description || 'Không có mô tả.'}</p>
+                            </div>
+                        </div>
+
+                        <div class="lecture-file-container">
+                            ${renderLectureFile(lecture)}
+                        </div>
+                    `;
+
+            $(".lecture-content").html(content);
+        }
+
+        // Hiển thị file bài giảng (PDF/PPT viewer)
+        function renderLectureFile(lecture) {
+            if (!lecture.filePath) {
+                return '<div class="alert alert-info">Bài giảng này không có tệp đính kèm.</div>';
+            }
+
+            var fileExt = lecture.filePath.split('.').pop().toLowerCase();
+
+            if (fileExt === 'pdf') {
+                return `
+                            <div class="ratio ratio-16x9" style="height: 600px;">
+                                <iframe src="${lecture.filePath}" allowfullscreen></iframe>
+                            </div>
+                        `;
+            } else if (fileExt === 'ppt' || fileExt === 'pptx') {
+                return `
+                            <div class="card">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-file-earmark-slides text-primary" style="font-size: 3rem;"></i>
+                                    <h5 class="mt-3">Tệp PowerPoint</h5>
+                                    <p>Bạn cần tải xuống để xem tệp này.</p>
+                                    <a href="${lecture.filePath}" class="btn btn-primary" download>
+                                        <i class="bi bi-download me-1"></i> Tải xuống
+                                    </a>
+                                </div>
+                            </div>
+                        `;
+            } else {
+                return `
+                            <div class="alert alert-warning">
+                                <i class="bi bi-exclamation-triangle me-2"></i>
+                                Định dạng file không được hỗ trợ để xem trực tiếp.
+                                <a href="${lecture.filePath}" class="btn btn-sm btn-outline-primary ms-3" download>
+                                    <i class="bi bi-download me-1"></i> Tải xuống
+                                </a>
+                            </div>
+                        `;
+            }
+        }
+
+        // Chỉnh sửa bài giảng
+        function editLecture(lectureId) {
+            // Hiện modal chỉnh sửa bài giảng
+            // Gửi AJAX request để lấy thông tin bài giảng
+            $.ajax({
+                url: '@Url.Action("GetLecture", "Classes")',
+                type: 'GET',
+                data: { lectureId: lectureId },
+                success: function (data) {
+                    // Tạo modal chỉnh sửa bài giảng
+                    var modalHtml = `
+                                <div class="modal fade" id="editLectureModal_${lectureId}" tabindex="-1" aria-labelledby="editLectureModalLabel_${lectureId}" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header bg-primary bg-opacity-25 text-primary">
+                                                <h5 class="modal-title" id="editLectureModalLabel_${lectureId}">Chỉnh sửa bài giảng</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <form action="@Url.Action("EditLecture", "Classes")" method="post" enctype="multipart/form-data">
+                                                <div class="modal-body">
+                                                    <input type="hidden" name="Id" value="${data.id}">
+                                                    <input type="hidden" name="ClassId" value="${data.classId}">
+
+                                                    <div class="mb-3">
+                                                        <label for="lectureTitle_${lectureId}" class="form-label">Tiêu đề bài giảng</label>
+                                                        <input type="text" class="form-control" id="lectureTitle_${lectureId}" name="Title" value="${data.title}" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="lectureDescription_${lectureId}" class="form-label">Mô tả</label>
+                                                        <textarea class="form-control" id="lectureDescription_${lectureId}" name="Description" rows="3">${data.description || ''}</textarea>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="lectureFile_${lectureId}" class="form-label">Thay đổi tệp bài giảng (PDF, PPT)</label>
+                                                        <input class="form-control" type="file" id="lectureFile_${lectureId}" name="LectureFile" accept=".pdf,.ppt,.pptx">
+                                                        <small class="form-text text-muted">Để trống nếu bạn không muốn thay đổi tệp hiện tại.</small>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                                    <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+
+                    // Thêm modal vào body và hiển thị
+                    $('body').append(modalHtml);
+                    $(`#editLectureModal_${lectureId}`).modal('show');
+
+                    // Xử lý sự kiện khi modal bị ẩn (đóng)
+                    $(`#editLectureModal_${lectureId}`).on('hidden.bs.modal', function () {
+                        $(this).remove();
+                    });
+                },
+                error: function (error) {
+                    console.error("Lỗi khi lấy thông tin bài giảng:", error);
+                    alert("Đã xảy ra lỗi khi lấy thông tin bài giảng. Vui lòng thử lại sau.");
+                }
+            });
+        }
+
+        // Xóa bài giảng
+        function deleteLecture(lectureId) {
+            if (confirm("Bạn có chắc chắn muốn xóa bài giảng này?")) {
+                $.ajax({
+                    url: '@Url.Action("DeleteLecture", "Classes")',
+                    type: 'POST',
+                    data: { lectureId: lectureId },
+                    success: function (response) {
+                        if (response.success) {
+                            // Reload lại trang sau khi xóa thành công
+                            location.reload();
+                        } else {
+                            alert(response.message || "Có lỗi xảy ra khi xóa bài giảng.");
+                        }
+                    },
+                    error: function (error) {
+                        console.error("Lỗi khi xóa bài giảng:", error);
+                        alert("Đã xảy ra lỗi khi xóa bài giảng. Vui lòng thử lại sau.");
+                    }
+                });
+            }
+        }
+    </script>
+}

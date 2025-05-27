@@ -9,20 +9,23 @@ using KLMS.Data;
 using KLMS.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
 
 namespace KLMS.Controllers
 {
+    [Authorize]
     public class ClassController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<User> _userManager;
 
-        public ClassController(ApplicationDbContext context)
+        public ClassController(ApplicationDbContext context, UserManager<User> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Class
-        [Authorize]
         public async Task<IActionResult> Index()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -50,6 +53,39 @@ namespace KLMS.Controllers
             }
 
             return View(await classesQuery.ToListAsync());
+        }
+
+        // GET: Classes/ClassView/5
+        public async Task<IActionResult> ClassView(long id, string tab = "lectures")
+        {
+            // Kiểm tra quyền truy cập
+            var userId = _userManager.GetUserId(User);
+            var currentUser = await _userManager.FindByIdAsync(userId);
+            var userRoles = await _userManager.GetRolesAsync(currentUser);
+
+            var classItem = await _context.Classes
+                .Include(c => c.Teacher)
+                .Include(c => c.Students)
+                .Include(c => c.Lectures)
+                .FirstOrDefaultAsync(c => c.Id == id);
+
+            if (classItem == null)
+            {
+                return NotFound();
+            }
+
+            // Kiểm tra nếu người dùng không phải admin hoặc giáo viên phụ trách,
+            // và không phải học sinh trong lớp thì không cho truy cập
+            if (!userRoles.Contains("Admin") && classItem.TeacherId != userId && !classItem.Students.Any(s => s.Id == userId))
+            {
+                return Forbid();
+            }
+
+            // Truyền role người dùng vào ViewBag
+            ViewBag.UserRole = userRoles.FirstOrDefault();
+            ViewBag.ActiveTab = tab;
+
+            return View(classItem);
         }
 
         // GET: Class/Details/5
