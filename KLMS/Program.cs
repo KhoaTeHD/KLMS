@@ -32,6 +32,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 
 builder.Services.AddTransient<IEmailSender, EmailSender>();
+builder.Services.AddSingleton<IWebHostEnvironment>();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();

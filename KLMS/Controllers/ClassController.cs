@@ -18,25 +18,25 @@ namespace KLMS.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<User> _userManager;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public ClassController(ApplicationDbContext context, UserManager<User> userManager)
+        public ClassController(ApplicationDbContext context, UserManager<User> userManager, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
             _userManager = userManager;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         // GET: Class
         public async Task<IActionResult> Index()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-
             IQueryable<Class> classesQuery = _context.Classes.Include(c => c.Teacher);
 
             //var applicationDbContext = _context.Classes.Include(c => c.Teacher);
 
             // Admin: Hiển thị tất cả lớp học
-            if (User.IsInRole("Administrator"))
+            if (User.IsInRole("Admin"))
             {
                 // Không cần lọc
             }
