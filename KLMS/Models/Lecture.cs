@@ -14,6 +14,9 @@ namespace KLMS.Models
 
         public DateTime LastModified { get; set; }
 
+        // ... existing properties
+        public string? FilePath { get; set; } // Đường dẫn đến file bài giảng
+
         public long ClassId { get; set; }
 
         [ForeignKey("ClassId")]
