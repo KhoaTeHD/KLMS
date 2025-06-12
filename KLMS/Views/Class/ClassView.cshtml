@@ -518,7 +518,7 @@
 
             // Gửi AJAX request để lấy nội dung bài giảng
             $.ajax({
-                url: '@Url.Action("GetLectureContent", "Classes")',
+                url: '@Url.Action("GetLectureContent", "Class")',
                 type: 'GET',
                 data: { lectureId: lectureId },
                 success: function (data) {
