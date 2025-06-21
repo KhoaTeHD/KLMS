@@ -65,6 +65,12 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
+    name: "admin",
+    pattern: "Admin/{action=Dashboard}/{id?}",
+    defaults: new { controller = "Admin" },
+    constraints: new { });
+
+app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 

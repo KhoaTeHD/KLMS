@@ -1,0 +1,331 @@
+﻿@model CreateUserViewModel
+@using KLMS.Controllers
+@{
+    ViewData["Title"] = "Tạo tài khoản mới";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="mb-1">
+                        <i class="bi bi-person-plus me-2"></i>@ViewData["Title"]
+                    </h1>
+                    <p class="text-muted mb-0">Tạo tài khoản mới cho học sinh, giáo viên hoặc quản trị viên</p>
+                </div>
+                <a asp-action="UserManagement" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-2"></i>Quay lại danh sách
+                </a>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-form me-2"></i>Thông tin tài khoản
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="CreateUser" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+                        <div class="row">
+                            <!-- Personal Information -->
+                            <div class="col-md-6">
+                                <h6 class="text-primary mb-3">
+                                    <i class="bi bi-person me-2"></i>Thông tin cá nhân
+                                </h6>
+
+                                <div class="mb-3">
+                                    <label asp-for="FullName" class="form-label">
+                                        <i class="bi bi-person-badge me-1"></i>Họ và tên *
+                                    </label>
+                                    <input asp-for="FullName" class="form-control" placeholder="Nhập họ và tên đầy đủ" />
+                                    <span asp-validation-for="FullName" class="text-danger"></span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="Email" class="form-label">
+                                        <i class="bi bi-envelope me-1"></i>Email *
+                                    </label>
+                                    <input asp-for="Email" class="form-control" type="email" placeholder="example@domain.com" />
+                                    <span asp-validation-for="Email" class="text-danger"></span>
+                                    <div class="form-text">Email sẽ được dùng làm tên đăng nhập</div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="PhoneNumber" class="form-label">
+                                        <i class="bi bi-telephone me-1"></i>Số điện thoại
+                                    </label>
+                                    <input asp-for="PhoneNumber" class="form-control" placeholder="0123456789" />
+                                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="Address" class="form-label">
+                                        <i class="bi bi-geo-alt me-1"></i>Địa chỉ
+                                    </label>
+                                    <textarea asp-for="Address" class="form-control" rows="3" placeholder="Nhập địa chỉ đầy đủ"></textarea>
+                                    <span asp-validation-for="Address" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <!-- Account Information -->
+                            <div class="col-md-6">
+                                <h6 class="text-primary mb-3">
+                                    <i class="bi bi-shield-lock me-2"></i>Thông tin tài khoản
+                                </h6>
+
+                                <div class="mb-3">
+                                    <label asp-for="Role" class="form-label">
+                                        <i class="bi bi-person-gear me-1"></i>Vai trò *
+                                    </label>
+                                    <select asp-for="Role" class="form-select">
+                                        <option value="">-- Chọn vai trò --</option>
+                                        @foreach (var role in ViewBag.Roles as List<string>)
+                                        {
+                                            <option value="@role">
+                                                @(role == "Admin" ? "Quản trị viên" :
+                                                    role == "Teacher" ? "Giáo viên" :
+                                                    role == "Student" ? "Học sinh" : role)
+                                            </option>
+                                        }
+                                    </select>
+                                    <span asp-validation-for="Role" class="text-danger"></span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="Password" class="form-label">
+                                        <i class="bi bi-key me-1"></i>Mật khẩu *
+                                    </label>
+                                    <div class="input-group">
+                                        <input asp-for="Password" class="form-control" type="password" placeholder="Nhập mật khẩu" />
+                                        <button type="button" class="btn btn-outline-secondary" onclick="togglePassword('Password')">
+                                            <i class="bi bi-eye" id="toggleIcon1"></i>
+                                        </button>
+                                    </div>
+                                    <span asp-validation-for="Password" class="text-danger"></span>
+                                    <div class="form-text">Mật khẩu phải có ít nhất 6 ký tự</div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="ConfirmPassword" class="form-label">
+                                        <i class="bi bi-check2-square me-1"></i>Xác nhận mật khẩu *
+                                    </label>
+                                    <div class="input-group">
+                                        <input asp-for="ConfirmPassword" class="form-control" type="password" placeholder="Nhập lại mật khẩu" />
+                                        <button type="button" class="btn btn-outline-secondary" onclick="togglePassword('ConfirmPassword')">
+                                            <i class="bi bi-eye" id="toggleIcon2"></i>
+                                        </button>
+                                    </div>
+                                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                                </div>
+
+                                <!-- Quick Password Generator -->
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <label class="form-label">Tạo mật khẩu tự động</label>
+                                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="generatePassword()">
+                                            <i class="bi bi-shuffle me-1"></i>Tạo mật khẩu
+                                        </button>
+                                    </div>
+                                    <div class="form-text">Tạo mật khẩu ngẫu nhiên 8 ký tự</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Role Information -->
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div class="card bg-light">
+                                    <div class="card-body">
+                                        <h6 class="card-title">
+                                            <i class="bi bi-info-circle me-2"></i>Thông tin về vai trò
+                                        </h6>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="role-info">
+                                                    <div class="d-flex align-items-center mb-2">
+                                                        <span class="badge bg-danger me-2">
+                                                            <i class="bi bi-shield-check"></i>
+                                                        </span>
+                                                        <strong>Quản trị viên</strong>
+                                                    </div>
+                                                    <ul class="small text-muted mb-0">
+                                                        <li>Quản lý toàn bộ hệ thống</li>
+                                                        <li>Tạo/sửa/xóa tài khoản</li>
+                                                        <li>Quản lý lớp học và nội dung</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="role-info">
+                                                    <div class="d-flex align-items-center mb-2">
+                                                        <span class="badge bg-primary me-2">
+                                                            <i class="bi bi-person-workspace"></i>
+                                                        </span>
+                                                        <strong>Giáo viên</strong>
+                                                    </div>
+                                                    <ul class="small text-muted mb-0">
+                                                        <li>Quản lý lớp được phân công</li>
+                                                        <li>Tạo bài giảng và bài tập</li>
+                                                        <li>Chấm điểm và theo dõi học sinh</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="role-info">
+                                                    <div class="d-flex align-items-center mb-2">
+                                                        <span class="badge bg-success me-2">
+                                                            <i class="bi bi-mortarboard"></i>
+                                                        </span>
+                                                        <strong>Học sinh</strong>
+                                                    </div>
+                                                    <ul class="small text-muted mb-0">
+                                                        <li>Tham gia lớp học</li>
+                                                        <li>Xem bài giảng và làm bài tập</li>
+                                                        <li>Theo dõi điểm số cá nhân</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div class="d-flex justify-content-end gap-2">
+                                    <a asp-action="UserManagement" class="btn btn-secondary">
+                                        <i class="bi bi-x-circle me-2"></i>Hủy
+                                    </a>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="bi bi-check-circle me-2"></i>Tạo tài khoản
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        function togglePassword(fieldName) {
+            const passwordField = document.getElementById(fieldName);
+            const toggleIcon = fieldName === 'Password' ? document.getElementById('toggleIcon1') : document.getElementById('toggleIcon2');
+
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                toggleIcon.className = 'bi bi-eye-slash';
+            } else {
+                passwordField.type = 'password';
+                toggleIcon.className = 'bi bi-eye';
+            }
+        }
+
+        function generatePassword() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@@#$%';
+            let password = '';
+
+            // Ensure at least one of each type
+            password += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.floor(Math.random() * 26)]; // Uppercase
+            password += 'abcdefghijklmnopqrstuvwxyz'[Math.floor(Math.random() * 26)]; // Lowercase
+            password += '0123456789'[Math.floor(Math.random() * 10)]; // Number
+            password += '@@#$%'[Math.floor(Math.random() * 4)]; // Special char
+
+            // Fill the rest randomly
+            for (let i = 4; i < 8; i++) {
+                password += chars[Math.floor(Math.random() * chars.length)];
+            }
+
+            // Shuffle the password
+            password = password.split('').sort(() => Math.random() - 0.5).join('');
+
+            document.getElementById('Password').value = password;
+            document.getElementById('ConfirmPassword').value = password;
+
+            // Show password temporarily
+            document.getElementById('Password').type = 'text';
+            document.getElementById('ConfirmPassword').type = 'text';
+            document.getElementById('toggleIcon1').className = 'bi bi-eye-slash';
+            document.getElementById('toggleIcon2').className = 'bi bi-eye-slash';
+
+            // Show toast
+            showToast('Mật khẩu đã được tạo: ' + password, 'success');
+        }
+
+        function showToast(message, type = 'info') {
+            const toastClass = type === 'success' ? 'bg-success' : type === 'warning' ? 'bg-warning' : 'bg-info';
+            const toast = document.createElement('div');
+            toast.className = `toast align-items-center text-white ${toastClass} border-0`;
+            toast.setAttribute('role', 'alert');
+            toast.innerHTML = `
+                        <div class="d-flex">
+                            <div class="toast-body">${message}</div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                        </div>
+                    `;
+
+            // Create toast container if it doesn't exist
+            let toastContainer = document.querySelector('.toast-container');
+            if (!toastContainer) {
+                toastContainer = document.createElement('div');
+                toastContainer.className = 'toast-container position-fixed top-0 end-0 p-3';
+                document.body.appendChild(toastContainer);
+            }
+
+            toastContainer.appendChild(toast);
+            const bsToast = new bootstrap.Toast(toast);
+            bsToast.show();
+
+            toast.addEventListener('hidden.bs.toast', function () {
+                toast.remove();
+            });
+        }
+
+        // Role change handler
+        document.getElementById('Role').addEventListener('change', function () {
+            const roleCards = document.querySelectorAll('.role-info');
+            roleCards.forEach(card => card.style.opacity = '0.5');
+
+            const selectedRole = this.value;
+            if (selectedRole === 'Admin') {
+                roleCards[0].style.opacity = '1';
+            } else if (selectedRole === 'Teacher') {
+                roleCards[1].style.opacity = '1';
+            } else if (selectedRole === 'Student') {
+                roleCards[2].style.opacity = '1';
+            }
+        });
+    </script>
+}
+
+@section Styles {
+    <style>
+        .role-info {
+            transition: opacity 0.3s ease;
+        }
+
+        .card {
+            border-radius: 10px;
+        }
+
+        .form-control, .form-select {
+            border-radius: 8px;
+        }
+
+        .btn {
+            border-radius: 8px;
+        }
+    </style>
+}

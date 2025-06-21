@@ -68,7 +68,7 @@
                         </button>
                     </li>
                 }
-                @if (userRole == "teacher")
+                @if (userRole == "Teacher")
                 {
                     <li class="nav-item" role="presentation">
                         <button class="nav-link @(activeTab == "assignments" ? "active" : "")" id="assignments-tab" data-bs-toggle="tab" data-bs-target="#assignments" type="button" role="tab" aria-controls="assignments" aria-selected="@(activeTab == "assignments" ? "true" : "false")">
@@ -241,7 +241,7 @@
                 }
 
                 <!-- Bài tập Tab (chỉ cho giáo viên) -->
-                @if (userRole == "teacher")
+                @if (userRole == "Teacher")
                 {
                     <div class="tab-pane fade @(activeTab == "assignments" ? "show active" : "")" id="assignments" role="tabpanel" aria-labelledby="assignments-tab">
                         <div class="card shadow-sm">
@@ -266,7 +266,7 @@
                 }
 
                 <!-- Bài kiểm tra Tab (chỉ cho giáo viên) -->
-                @if (userRole == "teacher")
+                @if (userRole == "Teacher")
                 {
                     <div class="tab-pane fade @(activeTab == "tests" ? "show active" : "")" id="tests" role="tabpanel" aria-labelledby="tests-tab">
                         <div class="card shadow-sm">

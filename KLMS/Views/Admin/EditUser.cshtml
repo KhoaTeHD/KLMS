@@ -1,0 +1,446 @@
+﻿@model EditUserViewModel
+@using KLMS.Controllers
+@{
+    ViewData["Title"] = "Chỉnh sửa tài khoản";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="mb-1">
+                        <i class="bi bi-pencil-square me-2"></i>@ViewData["Title"]
+                    </h1>
+                    <p class="text-muted mb-0">Chỉnh sửa thông tin tài khoản: <strong>@Model.Email</strong></p>
+                </div>
+                <a asp-action="UserManagement" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-2"></i>Quay lại danh sách
+                </a>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">
+                        <i class="bi bi-form me-2"></i>Cập nhật thông tin
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="EditUser" method="post">
+                        <input type="hidden" asp-for="Id" />
+                        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+                        <div class="row">
+                            <!-- Personal Information -->
+                            <div class="col-md-6">
+                                <h6 class="text-primary mb-3">
+                                    <i class="bi bi-person me-2"></i>Thông tin cá nhân
+                                </h6>
+                                
+                                <div class="mb-3">
+                                    <label asp-for="FullName" class="form-label">
+                                        <i class="bi bi-person-badge me-1"></i>Họ và tên *
+                                    </label>
+                                    <input asp-for="FullName" class="form-control" placeholder="Nhập họ và tên đầy đủ" />
+                                    <span asp-validation-for="FullName" class="text-danger"></span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="Email" class="form-label">
+                                        <i class="bi bi-envelope me-1"></i>Email
+                                    </label>
+                                    <input asp-for="Email" class="form-control" type="email" readonly />
+                                    <div class="form-text">Email không thể thay đổi</div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="PhoneNumber" class="form-label">
+                                        <i class="bi bi-telephone me-1"></i>Số điện thoại
+                                    </label>
+                                    <input asp-for="PhoneNumber" class="form-control" placeholder="0123456789" />
+                                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="Address" class="form-label">
+                                        <i class="bi bi-geo-alt me-1"></i>Địa chỉ
+                                    </label>
+                                    <textarea asp-for="Address" class="form-control" rows="3" placeholder="Nhập địa chỉ đầy đủ"></textarea>
+                                    <span asp-validation-for="Address" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <!-- Account Settings -->
+                            <div class="col-md-6">
+                                <h6 class="text-primary mb-3">
+                                    <i class="bi bi-gear me-2"></i>Cài đặt tài khoản
+                                </h6>
+
+                                <div class="mb-3">
+                                    <label class="form-label">
+                                        <i class="bi bi-person-gear me-1"></i>Vai trò hiện tại
+                                    </label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" value="@(Model.CurrentRole == "Admin" ? "Quản trị viên" : Model.CurrentRole == "Teacher" ? "Giáo viên" : Model.CurrentRole == "Student" ? "Học sinh" : Model.CurrentRole)" readonly />
+                                        <span class="input-group-text">
+                                            @if (Model.CurrentRole == "Admin")
+                                            {
+                                                <i class="bi bi-shield-check text-danger"></i>
+                                            }
+                                            else if (Model.CurrentRole == "Teacher")
+                                            {
+                                                <i class="bi bi-person-workspace text-primary"></i>
+                                            }
+                                            else if (Model.CurrentRole == "Student")
+                                            {
+                                                <i class="bi bi-mortarboard text-success"></i>
+                                            }
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="NewRole" class="form-label">
+                                        <i class="bi bi-arrow-repeat me-1"></i>Thay đổi vai trò
+                                    </label>
+                                    <select asp-for="NewRole" class="form-select">
+                                        <option value="">-- Giữ nguyên vai trò hiện tại --</option>
+                                        @foreach (var role in ViewBag.Roles as List<string>)
+                                        {
+                                            if (role != Model.CurrentRole)
+                                            {
+                                                <option value="@role">
+                                                    @(role == "Admin" ? "Quản trị viên" : 
+                                                      role == "Teacher" ? "Giáo viên" : 
+                                                      role == "Student" ? "Học sinh" : role)
+                                                </option>
+                                            }
+                                        }
+                                    </select>
+                                    <span asp-validation-for="NewRole" class="text-danger"></span>
+                                    <div class="form-text">Để trống nếu không muốn thay đổi vai trò</div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" asp-for="IsEmailConfirmed" />
+                                        <label class="form-check-label" asp-for="IsEmailConfirmed">
+                                            <i class="bi bi-envelope-check me-1"></i>Email đã xác thực
+                                        </label>
+                                    </div>
+                                    <div class="form-text">Kích hoạt nếu email đã được xác thực</div>
+                                </div>
+
+                                <!-- Quick Actions -->
+                                <div class="mb-3">
+                                    <label class="form-label">Thao tác nhanh</label>
+                                    <div class="d-grid gap-2">
+                                        <button type="button" class="btn btn-outline-warning btn-sm" 
+                                                onclick="showResetPasswordModal()">
+                                            <i class="bi bi-key me-1"></i>Đặt lại mật khẩu
+                                        </button>
+                                        <button type="button" class="btn btn-outline-info btn-sm" 
+                                                onclick="sendWelcomeEmail()">
+                                            <i class="bi bi-envelope-paper me-1"></i>Gửi email chào mừng
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Account Status -->
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div class="card bg-light">
+                                    <div class="card-body">
+                                        <h6 class="card-title">
+                                            <i class="bi bi-info-circle me-2"></i>Trạng thái tài khoản
+                                        </h6>
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <div class="text-center">
+                                                    @if (Model.IsEmailConfirmed)
+                                                    {
+                                                        <i class="bi bi-check-circle-fill text-success" style="font-size: 2rem;"></i>
+                                                        <div class="mt-2">
+                                                            <small class="text-success fw-bold">Email đã xác thực</small>
+                                                        </div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <i class="bi bi-exclamation-triangle-fill text-warning" style="font-size: 2rem;"></i>
+                                                        <div class="mt-2">
+                                                            <small class="text-warning fw-bold">Email chưa xác thực</small>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="text-center">
+                                                    <i class="bi bi-shield-check text-primary" style="font-size: 2rem;"></i>
+                                                    <div class="mt-2">
+                                                        <small class="text-primary fw-bold">Tài khoản hoạt động</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="text-center">
+                                                    <i class="bi bi-calendar-check text-info" style="font-size: 2rem;"></i>
+                                                    <div class="mt-2">
+                                                        <small class="text-info fw-bold">Có thể đăng nhập</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="text-center">
+                                                    <i class="bi bi-person-check text-success" style="font-size: 2rem;"></i>
+                                                    <div class="mt-2">
+                                                        <small class="text-success fw-bold">Hồ sơ đầy đủ</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        @if (Model.CurrentRole != "Admin")
+                                        {
+                                            <button type="button" class="btn btn-outline-danger" 
+                                                    onclick="confirmDeleteUser()">
+                                                <i class="bi bi-trash me-2"></i>Xóa tài khoản
+                                            </button>
+                                        }
+                                    </div>
+                                    <div class="d-flex gap-2">
+                                        <a asp-action="UserManagement" class="btn btn-secondary">
+                                            <i class="bi bi-x-circle me-2"></i>Hủy
+                                        </a>
+                                        <button type="submit" class="btn btn-warning">
+                                            <i class="bi bi-check-circle me-2"></i>Cập nhật
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Reset Password Modal -->
+<div class="modal fade" id="resetPasswordModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-key me-2"></i>Đặt lại mật khẩu
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="resetPasswordForm">
+                <div class="modal-body">
+                    <p>Đặt lại mật khẩu cho: <strong>@Model.Email</strong></p>
+                    <div class="mb-3">
+                        <label for="newPassword" class="form-label">Mật khẩu mới</label>
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="newPassword" required minlength="6">
+                            <button type="button" class="btn btn-outline-secondary" onclick="togglePasswordModal()">
+                                <i class="bi bi-eye" id="toggleIconModal"></i>
+                            </button>
+                        </div>
+                        <div class="form-text">Mật khẩu phải có ít nhất 6 ký tự</div>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <small class="text-muted">hoặc</small>
+                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="generatePasswordModal()">
+                            <i class="bi bi-shuffle me-1"></i>Tạo mật khẩu tự động
+                        </button>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-warning">
+                        <i class="bi bi-key me-1"></i>Đặt lại mật khẩu
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container position-fixed top-0 end-0 p-3"></div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    
+    <script>
+        function showResetPasswordModal() {
+            document.getElementById('newPassword').value = '';
+            new bootstrap.Modal(document.getElementById('resetPasswordModal')).show();
+        }
+
+        function togglePasswordModal() {
+            const passwordField = document.getElementById('newPassword');
+            const toggleIcon = document.getElementById('toggleIconModal');
+            
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                toggleIcon.className = 'bi bi-eye-slash';
+            } else {
+                passwordField.type = 'password';
+                toggleIcon.className = 'bi bi-eye';
+            }
+        }
+
+        function generatePasswordModal() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@@#$%';
+            let password = '';
+            
+            // Ensure at least one of each type
+            password += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.floor(Math.random() * 26)];
+            password += 'abcdefghijklmnopqrstuvwxyz'[Math.floor(Math.random() * 26)];
+            password += '0123456789'[Math.floor(Math.random() * 10)];
+            password += '@@#$%'[Math.floor(Math.random() * 4)];
+            
+            for (let i = 4; i < 8; i++) {
+                password += chars[Math.floor(Math.random() * chars.length)];
+            }
+            
+            password = password.split('').sort(() => Math.random() - 0.5).join('');
+            
+            document.getElementById('newPassword').value = password;
+            document.getElementById('newPassword').type = 'text';
+            document.getElementById('toggleIconModal').className = 'bi bi-eye-slash';
+            
+            showToast('Mật khẩu đã được tạo: ' + password, 'success');
+        }
+
+        function confirmDeleteUser() {
+            if (confirm(`Bạn có chắc chắn muốn xóa tài khoản "@Model.Email"?\n\nHành động này không thể hoàn tác.`)) {
+                deleteUserFromEdit();
+            }
+        }
+
+        function deleteUserFromEdit() {
+            fetch('@Url.Action("DeleteUser", "Admin")', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value || ''
+                },
+                body: `id=@Model.Id`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    setTimeout(() => {
+                        window.location.href = '@Url.Action("UserManagement", "Admin")';
+                    }, 1500);
+                } else {
+                    showToast(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast('Có lỗi xảy ra khi xóa tài khoản', 'error');
+            });
+        }
+
+        function sendWelcomeEmail() {
+            // Simulated function - implement based on your needs
+            showToast('Chức năng gửi email chào mừng đang được phát triển', 'info');
+        }
+
+        document.getElementById('resetPasswordForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const newPassword = document.getElementById('newPassword').value;
+            
+            if (newPassword.length < 6) {
+                showToast('Mật khẩu phải có ít nhất 6 ký tự', 'warning');
+                return;
+            }
+
+            fetch('@Url.Action("ResetPassword", "Admin")', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value || ''
+                },
+                body: `userId=@Model.Id&newPassword=${encodeURIComponent(newPassword)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    bootstrap.Modal.getInstance(document.getElementById('resetPasswordModal')).hide();
+                } else {
+                    showToast(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast('Có lỗi xảy ra khi đặt lại mật khẩu', 'error');
+            });
+        });
+
+        function showToast(message, type = 'info') {
+            const toastClass = type === 'error' ? 'bg-danger' : type === 'success' ? 'bg-success' : type === 'warning' ? 'bg-warning' : 'bg-info';
+            const toast = document.createElement('div');
+            toast.className = `toast align-items-center text-white ${toastClass} border-0`;
+            toast.setAttribute('role', 'alert');
+            toast.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body">${message}</div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            `;
+
+            document.querySelector('.toast-container').appendChild(toast);
+            const bsToast = new bootstrap.Toast(toast);
+            bsToast.show();
+
+            toast.addEventListener('hidden.bs.toast', function () {
+                toast.remove();
+            });
+        }
+    </script>
+}
+
+@section Styles {
+    <style>
+        .card {
+            border-radius: 10px;
+        }
+        
+        .form-control, .form-select {
+            border-radius: 8px;
+        }
+        
+        .btn {
+            border-radius: 8px;
+        }
+        
+        .form-control[readonly] {
+            background-color: #f8f9fa;
+        }
+    </style>
+}
+
+@{
+    // Add CSRF token for AJAX requests
+    @Html.AntiForgeryToken()
+}

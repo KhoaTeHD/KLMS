@@ -46,6 +46,13 @@ namespace KLMS.Areas.Identity.Pages.Account.Manage
         [BindProperty]
         public InputModel Input { get; set; }
 
+        // Thêm các thuộc tính để hiển thị thông tin User
+        public string FullName { get; set; }
+        public string Email { get; set; }
+        public string Address { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public IList<string> UserRoles { get; set; }
+
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
         ///     directly from your code. This API may change or be removed in future releases.
@@ -57,20 +64,36 @@ namespace KLMS.Areas.Identity.Pages.Account.Manage
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [Phone]
-            [Display(Name = "Phone number")]
+            [Display(Name = "Số điện thoại")]
             public string PhoneNumber { get; set; }
+
+            [StringLength(200)]
+            [Display(Name = "Họ và tên")]
+            public string FullName { get; set; }
+
+            [StringLength(500)]
+            [Display(Name = "Địa chỉ")]
+            public string Address { get; set; }
         }
 
         private async Task LoadAsync(User user)
         {
             var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
+            var userRoles = await _userManager.GetRolesAsync(user);
 
             Username = userName;
+            FullName = user.FullName;
+            Email = user.Email;
+            Address = user.Address;
+            CreatedAt = user.CreatedAt;
+            UserRoles = userRoles;
 
             Input = new InputModel
             {
-                PhoneNumber = phoneNumber
+                PhoneNumber = phoneNumber,
+                FullName = user.FullName,
+                Address = user.Address
             };
         }
 
@@ -100,6 +123,7 @@ namespace KLMS.Areas.Identity.Pages.Account.Manage
                 return Page();
             }
 
+            // Cập nhật số điện thoại
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
             if (Input.PhoneNumber != phoneNumber)
             {
@@ -111,8 +135,33 @@ namespace KLMS.Areas.Identity.Pages.Account.Manage
                 }
             }
 
+            // Cập nhật thông tin bổ sung
+            bool userUpdated = false;
+
+            if (Input.FullName != user.FullName)
+            {
+                user.FullName = Input.FullName;
+                userUpdated = true;
+            }
+
+            if (Input.Address != user.Address)
+            {
+                user.Address = Input.Address;
+                userUpdated = true;
+            }
+
+            if (userUpdated)
+            {
+                var updateResult = await _userManager.UpdateAsync(user);
+                if (!updateResult.Succeeded)
+                {
+                    StatusMessage = "Unexpected error when trying to update user information.";
+                    return RedirectToPage();
+                }
+            }
+
             await _signInManager.RefreshSignInAsync(user);
-            StatusMessage = "Your profile has been updated";
+            StatusMessage = "Thông tin tài khoản của bạn đã được cập nhật";
             return RedirectToPage();
         }
     }

@@ -2,14 +2,56 @@
 @{
     var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
 }
-<ul class="nav nav-pills flex-column">
-    <li class="nav-item"><a class="nav-link @ManageNavPages.IndexNavClass(ViewContext)" id="profile" asp-page="./Index">Profile</a></li>
-    <li class="nav-item"><a class="nav-link @ManageNavPages.EmailNavClass(ViewContext)" id="email" asp-page="./Email">Email</a></li>
-    <li class="nav-item"><a class="nav-link @ManageNavPages.ChangePasswordNavClass(ViewContext)" id="change-password" asp-page="./ChangePassword">Password</a></li>
-    @if (hasExternalLogins)
-    {
-        <li id="external-logins" class="nav-item"><a id="external-login" class="nav-link @ManageNavPages.ExternalLoginsNavClass(ViewContext)" asp-page="./ExternalLogins">External logins</a></li>
+
+<div class="card shadow-sm">
+    <div class="card-header bg-primary text-white">
+        <h6 class="card-title mb-0">
+            <i class="bi bi-gear me-2"></i>Quản lý tài khoản
+        </h6>
+    </div>
+    <div class="list-group list-group-flush">
+        <a class="list-group-item list-group-item-action @ManageNavPages.IndexNavClass(ViewContext)"
+           asp-page="./Index">
+            <i class="bi bi-person-circle me-2"></i>Thông tin cá nhân
+        </a>
+        <a class="list-group-item list-group-item-action @ManageNavPages.EmailNavClass(ViewContext)"
+           asp-page="./Email">
+            <i class="bi bi-envelope me-2"></i>Quản lý Email
+        </a>
+        <a class="list-group-item list-group-item-action @ManageNavPages.ChangePasswordNavClass(ViewContext)"
+           asp-page="./ChangePassword">
+            <i class="bi bi-shield-lock me-2"></i>Đổi mật khẩu
+        </a>
+        @if (hasExternalLogins)
+        {
+            <a class="list-group-item list-group-item-action @ManageNavPages.ExternalLoginsNavClass(ViewContext)"
+               asp-page="./ExternalLogins">
+                <i class="bi bi-link-45deg me-2"></i>Đăng nhập bên ngoài
+            </a>
+            <a class="list-group-item list-group-item-action @ManageNavPages.TwoFactorAuthenticationNavClass(ViewContext)"
+               asp-page="./TwoFactorAuthentication">
+                <i class="bi bi-shield-check me-2"></i>Xác thực 2 bước
+            </a>
+            <a class="list-group-item list-group-item-action @ManageNavPages.PersonalDataNavClass(ViewContext)"
+               asp-page="./PersonalData">
+                <i class="bi bi-file-person me-2"></i>Dữ liệu cá nhân
+            </a>
+        }
+    </div>
+</div>
+
+<style>
+    .list-group-item-action.active {
+        background-color: var(--bs-primary);
+        border-color: var(--bs-primary);
+        color: white;
     }
-    <li class="nav-item"><a class="nav-link @ManageNavPages.TwoFactorAuthenticationNavClass(ViewContext)" id="two-factor" asp-page="./TwoFactorAuthentication">Two-factor authentication</a></li>
-    <li class="nav-item"><a class="nav-link @ManageNavPages.PersonalDataNavClass(ViewContext)" id="personal-data" asp-page="./PersonalData">Personal data</a></li>
-</ul>
+
+    .list-group-item-action.active i {
+        color: white;
+    }
+
+    .list-group-item-action:hover {
+        background-color: var(--bs-light);
+    }
+</style>
