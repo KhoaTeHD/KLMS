@@ -113,7 +113,7 @@ namespace KLMS.Controllers
         public IActionResult Create()
         {
             var teachers = _userManager.GetUsersInRoleAsync("Teacher").Result;
-            ViewData["TeacherId"] = new SelectList(_context.Users, "Id", "Id");
+            ViewData["TeacherId"] = new SelectList(_context.Users, "Id", "FullName");
             return View();
         }
 
@@ -127,7 +127,6 @@ namespace KLMS.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Gán các giá trị mặc định nếu cần
                 @class.CreatedDate = DateOnly.FromDateTime(DateTime.Now);
                 @class.LastModified = DateTime.Now;
 
@@ -135,7 +134,7 @@ namespace KLMS.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["TeacherId"] = new SelectList(_context.Users, "Id", "Id", @class.TeacherId);
+            ViewData["TeacherId"] = new SelectList(_context.Users, "Id", "FullName", @class.TeacherId);
             return View(@class);
         }
 

@@ -1,8 +1,676 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Trang chủ - KLMS";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<!-- Hero Section -->
+<section class="hero-section bg-gradient-primary text-white py-5 mb-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h1 class="display-4 fw-bold mb-4">Chào mừng đến với KLMS</h1>
+                <p class="lead mb-4">Hệ thống quản lý học tập hiện đại - Nơi tri thức được chia sẻ và phát triển</p>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <div class="hero-stat">
+                            <h3 class="fw-bold">500+</h3>
+                            <p class="mb-0">Học sinh</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="hero-stat">
+                            <h3 class="fw-bold">50+</h3>
+                            <p class="mb-0">Giáo viên</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="hero-stat">
+                            <h3 class="fw-bold">8</h3>
+                            <p class="mb-0">Môn học</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 text-center">
+                <div class="hero-icon">
+                    <i class="bi bi-mortarboard-fill display-1"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Subjects Section -->
+<section class="subjects-section mb-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold mb-3">Các môn học tại trung tâm</h2>
+            <p class="text-muted">Chúng tôi cung cấp chương trình học toàn diện từ lớp 6 đến lớp 12</p>
+        </div>
+
+        <div class="row g-4">
+            <!-- Toán -->
+            <div class="col-lg-3 col-md-6">
+                <div class="subject-card h-100">
+                    <div class="card-icon bg-primary">
+                        <i class="bi bi-calculator"></i>
+                    </div>
+                    <h5>Toán học</h5>
+                    <p class="text-muted">Đại số, Hình học, Giải tích</p>
+                    <div class="grades">
+                        <span class="grade-badge">6</span>
+                        <span class="grade-badge">7</span>
+                        <span class="grade-badge">8</span>
+                        <span class="grade-badge">9</span>
+                        <span class="grade-badge">10</span>
+                        <span class="grade-badge">11</span>
+                        <span class="grade-badge">12</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tiếng Anh -->
+            <div class="col-lg-3 col-md-6">
+                <div class="subject-card h-100">
+                    <div class="card-icon bg-success">
+                        <i class="bi bi-translate"></i>
+                    </div>
+                    <h5>Tiếng Anh</h5>
+                    <p class="text-muted">Ngữ pháp, Từ vựng, Giao tiếp</p>
+                    <div class="grades">
+                        <span class="grade-badge">6</span>
+                        <span class="grade-badge">7</span>
+                        <span class="grade-badge">8</span>
+                        <span class="grade-badge">9</span>
+                        <span class="grade-badge">10</span>
+                        <span class="grade-badge">11</span>
+                        <span class="grade-badge">12</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vật lý -->
+            <div class="col-lg-3 col-md-6">
+                <div class="subject-card h-100">
+                    <div class="card-icon bg-info">
+                        <i class="bi bi-lightning"></i>
+                    </div>
+                    <h5>Vật lý</h5>
+                    <p class="text-muted">Cơ học, Điện học, Quang học</p>
+                    <div class="grades">
+                        <span class="grade-badge">6</span>
+                        <span class="grade-badge">7</span>
+                        <span class="grade-badge">8</span>
+                        <span class="grade-badge">9</span>
+                        <span class="grade-badge">10</span>
+                        <span class="grade-badge">11</span>
+                        <span class="grade-badge">12</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hóa học -->
+            <div class="col-lg-3 col-md-6">
+                <div class="subject-card h-100">
+                    <div class="card-icon bg-warning">
+                        <i class="bi bi-flask"></i>
+                    </div>
+                    <h5>Hóa học</h5>
+                    <p class="text-muted">Hóa vô cơ, Hóa hữu cơ</p>
+                    <div class="grades">
+                        <span class="grade-badge">8</span>
+                        <span class="grade-badge">9</span>
+                        <span class="grade-badge">10</span>
+                        <span class="grade-badge">11</span>
+                        <span class="grade-badge">12</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sinh học -->
+            <div class="col-lg-3 col-md-6">
+                <div class="subject-card h-100">
+                    <div class="card-icon bg-success">
+                        <i class="bi bi-tree"></i>
+                    </div>
+                    <h5>Sinh học</h5>
+                    <p class="text-muted">Tế bào, Di truyền, Sinh thái</p>
+                    <div class="grades">
+                        <span class="grade-badge">6</span>
+                        <span class="grade-badge">7</span>
+                        <span class="grade-badge">8</span>
+                        <span class="grade-badge">9</span>
+                        <span class="grade-badge">10</span>
+                        <span class="grade-badge">11</span>
+                        <span class="grade-badge">12</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ngữ văn -->
+            <div class="col-lg-3 col-md-6">
+                <div class="subject-card h-100">
+                    <div class="card-icon bg-danger">
+                        <i class="bi bi-book"></i>
+                    </div>
+                    <h5>Ngữ văn</h5>
+                    <p class="text-muted">Văn học, Làm văn, Chính tả</p>
+                    <div class="grades">
+                        <span class="grade-badge">6</span>
+                        <span class="grade-badge">7</span>
+                        <span class="grade-badge">8</span>
+                        <span class="grade-badge">9</span>
+                        <span class="grade-badge">10</span>
+                        <span class="grade-badge">11</span>
+                        <span class="grade-badge">12</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Đánh giá năng lực -->
+            <div class="col-lg-3 col-md-6">
+                <div class="subject-card h-100">
+                    <div class="card-icon bg-purple">
+                        <i class="bi bi-award"></i>
+                    </div>
+                    <h5>Đánh giá năng lực</h5>
+                    <p class="text-muted">Luyện thi ĐGNL các trường ĐH</p>
+                    <div class="grades">
+                        <span class="grade-badge">10</span>
+                        <span class="grade-badge">11</span>
+                        <span class="grade-badge">12</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tin học -->
+            <div class="col-lg-3 col-md-6">
+                <div class="subject-card h-100">
+                    <div class="card-icon bg-dark">
+                        <i class="bi bi-laptop"></i>
+                    </div>
+                    <h5>Tin học</h5>
+                    <p class="text-muted">Lập trình, Ứng dụng, Thuật toán</p>
+                    <div class="grades">
+                        <span class="grade-badge">6</span>
+                        <span class="grade-badge">7</span>
+                        <span class="grade-badge">8</span>
+                        <span class="grade-badge">9</span>
+                        <span class="grade-badge">10</span>
+                        <span class="grade-badge">11</span>
+                        <span class="grade-badge">12</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Schedule Section -->
+<section class="schedule-section bg-light py-5 mb-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold mb-4">Thời khóa biểu trung tâm</h2>
+            <p class="mb-4">Xem lịch học chi tiết của trung tâm để không bỏ lỡ bất kỳ buổi học nào</p>
+        </div>
+
+        <!-- Quick Schedule Info -->
+        <div class="row g-3 mb-5 justify-content-center">
+            <div class="col-lg-3 col-md-6">
+                <div class="quick-info-card text-center">
+                    <div class="icon-wrapper bg-primary mx-auto mb-3">
+                        <i class="bi bi-clock text-white"></i>
+                    </div>
+                    <h6 class="mb-1">Giờ học</h6>
+                    <small class="text-muted">7:00 - 21:00</small>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="quick-info-card text-center">
+                    <div class="icon-wrapper bg-success mx-auto mb-3">
+                        <i class="bi bi-calendar-week text-white"></i>
+                    </div>
+                    <h6 class="mb-1">Ngày học</h6>
+                    <small class="text-muted">Thứ 2 - Chủ nhật</small>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="quick-info-card text-center">
+                    <div class="icon-wrapper bg-info mx-auto mb-3">
+                        <i class="bi bi-people text-white"></i>
+                    </div>
+                    <h6 class="mb-1">Sĩ số lớp</h6>
+                    <small class="text-muted">15-20 học sinh</small>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="quick-info-card text-center">
+                    <div class="icon-wrapper bg-warning mx-auto mb-3">
+                        <i class="bi bi-mortarboard text-white"></i>
+                    </div>
+                    <h6 class="mb-1">Phương pháp</h6>
+                    <small class="text-muted">Học theo nhóm nhỏ</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Schedule Image -->
+        <div class="row justify-content-center mb-4">
+            <div class="col-lg-10 col-xl-8">
+                <div class="schedule-preview text-center">
+                    <img src="~/uploads/schedule/tkb.jpg" alt="Thời khóa biểu trung tâm KLMS" class="img-fluid rounded shadow"
+                         onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjUwMCIgdmlld0JveD0iMCAwIDgwMCA1MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI4MDAiIGhlaWdodD0iNTAwIiBmaWxsPSIjRjhGOUZBIi8+CjxyZWN0IHg9IjUwIiB5PSI1MCIgd2lkdGg9IjcwMCIgaGVpZ2h0PSI0MDAiIGZpbGw9IndoaXRlIiBzdHJva2U9IiNFNUU3RUIiIHN0cm9rZS13aWR0aD0iMyIgcng9IjEwIi8+CjwhLS0gSGVhZGVyIC0tPgo8cmVjdCB4PSI1MCIgeT0iNTAiIHdpZHRoPSI3MDAiIGhlaWdodD0iNjAiIGZpbGw9IiMwMDdiZmYiIHJ4PSIxMCIvPgo8dGV4dCB4PSI0MDAiIHk9Ijg1IiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjQiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+VEjhu51JIES0zOwQSBJU1UgVFJVTkcgVMOCTSBLTE1TPC90ZXh0PgoKPCEtLSBEYXlzIG9mIHdlZWsgLS0+CjxyZWN0IHg9IjUwIiB5PSIxMTAiIHdpZHRoPSIxMDAiIGhlaWdodD0iNDAiIGZpbGw9IiNmOGY5ZmEiIHN0cm9rZT0iI2RlZTJlNiIvPgo8dGV4dCB4PSIxMDAiIHk9IjEzNSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjEyIiBmaWxsPSIjNDk1MDU3IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5HaeG7nzwvdGV4dD4KCjxyZWN0IHg9IjE1MCIgeT0iMTEwIiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjZjhmOWZhIiBzdHJva2U9IiNkZWUyZTYiLz4KPHRleHQgeD0iMjAwIiB5PSIxMzUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzQ5NTA1NyIgdGV4dC1hbmNob3I9Im1pZGRsZSI+VGjhu6cgMjwvdGV4dD4KCjxyZWN0IHg9IjI1MCIgeT0iMTEwIiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjZjhmOWZhIiBzdHJva2U9IiNkZWUyZTYiLz4KPHRleHQgeD0iMzAwIiB5PSIxMzUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzQ5NTA1NyIgdGV4dC1hbmNob3I9Im1pZGRsZSI+VGjhu6cgMzwvdGV4dD4KCjxyZWN0IHg9IjM1MCIgeT0iMTEwIiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjZjhmOWZhIiBzdHJva2U9IiNkZWUyZTYiLz4KPHRleHQgeD0iNDAwIiB5PSIxMzUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzQ5NTA1NyIgdGV4dC1hbmNob3I9Im1pZGRsZSI+VGjhu6cgNDwvdGV4dD4KCjxyZWN0IHg9IjQ1MCIgeT0iMTEwIiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjZjhmOWZhIiBzdHJva2U9IiNkZWUyZTYiLz4KPHRleHQgeD0iNTAwIiB5PSIxMzUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzQ5NTA1NyIgdGV4dC1hbmNob3I9Im1pZGRsZSI+VGjhu6cgNTwvdGV4dD4KCjxyZWN0IHg9IjU1MCIgeT0iMTEwIiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjZjhmOWZhIiBzdHJva2U9IiNkZWUyZTYiLz4KPHRleHQgeD0iNjAwIiB5PSIxMzUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzQ5NTA1NyIgdGV4dC1hbmNob3I9Im1pZGRsZSI+VGjhu6cgNzwvdGV4dD4KCjxyZWN0IHg9IjY1MCIgeT0iMTEwIiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjZjhmOWZhIiBzdHJva2U9IiNkZWUyZTYiLz4KPHRleHQgeD0iNzAwIiB5PSIxMzUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzQ5NTA1NyIgdGV4dC1hbmNob3I9Im1pZGRsZSI+Q04ePHRleHQ+CgogPC9zdmc+'">
+                    <div class="schedule-overlay">
+                        <button class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#scheduleModal">
+                            <i class="bi bi-calendar3 me-2"></i>Xem thời khóa biểu chi tiết
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section mb-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold mb-3">Tại sao chọn KLMS?</h2>
+            <p class="text-muted">Hệ thống học tập hiện đại với nhiều tính năng ưu việt</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card text-center">
+                    <div class="feature-icon bg-primary">
+                        <i class="bi bi-laptop text-white"></i>
+                    </div>
+                    <h5 class="mt-4 mb-3">Học trực tuyến</h5>
+                    <p class="text-muted">Truy cập bài giảng mọi lúc, mọi nơi với giao diện thân thiện</p>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card text-center">
+                    <div class="feature-icon bg-success">
+                        <i class="bi bi-people text-white"></i>
+                    </div>
+                    <h5 class="mt-4 mb-3">Tương tác trực tiếp</h5>
+                    <p class="text-muted">Chat với giáo viên và bạn học để giải đáp thắc mắc</p>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card text-center">
+                    <div class="feature-icon bg-info">
+                        <i class="bi bi-graph-up text-white"></i>
+                    </div>
+                    <h5 class="mt-4 mb-3">Theo dõi tiến độ</h5>
+                    <p class="text-muted">Xem báo cáo chi tiết về quá trình học tập và điểm số</p>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card text-center">
+                    <div class="feature-icon bg-warning">
+                        <i class="bi bi-shield-check text-white"></i>
+                    </div>
+                    <h5 class="mt-4 mb-3">Bảo mật cao</h5>
+                    <p class="text-muted">Hệ thống kiểm tra chống gian lận trong các bài thi</p>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card text-center">
+                    <div class="feature-icon bg-purple">
+                        <i class="bi bi-file-earmark-text text-white"></i>
+                    </div>
+                    <h5 class="mt-4 mb-3">Tài liệu phong phú</h5>
+                    <p class="text-muted">Kho tài liệu đa dạng: PDF, PowerPoint, Word, Video</p>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card text-center">
+                    <div class="feature-icon bg-dark">
+                        <i class="bi bi-phone text-white"></i>
+                    </div>
+                    <h5 class="mt-4 mb-3">Đa nền tảng</h5>
+                    <p class="text-muted">Sử dụng trên máy tính, tablet, điện thoại một cách linh hoạt</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact & Info Section -->
+<section class="contact-section bg-light py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 mb-4">
+                <h3 class="fw-bold mb-4">Liên hệ với chúng tôi</h3>
+                <div class="contact-info">
+                    <div class="contact-item mb-3">
+                        <div class="d-flex align-items-center">
+                            <div class="contact-icon bg-primary me-3">
+                                <i class="bi bi-geo-alt text-white"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1">Địa chỉ</h6>
+                                <p class="mb-0 text-muted">123 Đường ABC, Quận XYZ, TP.HCM</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="contact-item mb-3">
+                        <div class="d-flex align-items-center">
+                            <div class="contact-icon bg-success me-3">
+                                <i class="bi bi-telephone text-white"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1">Điện thoại</h6>
+                                <p class="mb-0 text-muted">0123 456 789</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="contact-item mb-3">
+                        <div class="d-flex align-items-center">
+                            <div class="contact-icon bg-info me-3">
+                                <i class="bi bi-envelope text-white"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1">Email</h6>
+                                <p class="mb-0 text-muted">info@klms.edu.vn</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="contact-item">
+                        <div class="d-flex align-items-center">
+                            <div class="contact-icon bg-warning me-3">
+                                <i class="bi bi-clock text-white"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1">Giờ làm việc</h6>
+                                <p class="mb-0 text-muted">7:00 - 21:00 (Thứ 2 - Chủ nhật)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <h3 class="fw-bold mb-4">Gửi tin nhắn cho chúng tôi</h3>
+                <form class="contact-form">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" placeholder="Họ và tên" required>
+                        </div>
+                        <div class="col-md-6">
+                            <input type="email" class="form-control" placeholder="Email" required>
+                        </div>
+                        <div class="col-12">
+                            <input type="text" class="form-control" placeholder="Số điện thoại">
+                        </div>
+                        <div class="col-12">
+                            <textarea class="form-control" rows="4" placeholder="Nội dung tin nhắn" required></textarea>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-send me-2"></i>Gửi tin nhắn
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Schedule Modal -->
+<div class="modal fade" id="scheduleModal" tabindex="-1" aria-labelledby="scheduleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="scheduleModalLabel">
+                    <i class="bi bi-calendar3 me-2"></i>Thời khóa biểu trung tâm KLMS
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered schedule-table">
+                        <thead class="table-primary">
+                            <tr>
+                                <th width="100">Giờ học</th>
+                                <th>Thứ 2</th>
+                                <th>Thứ 3</th>
+                                <th>Thứ 4</th>
+                                <th>Thứ 5</th>
+                                <th>Thứ 6</th>
+                                <th>Thứ 7</th>
+                                <th>Chủ nhật</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="fw-bold time-slot">7:00-8:30</td>
+                                <td class="subject-cell math">Toán 12</td>
+                                <td class="subject-cell physics">Lý 11</td>
+                                <td class="subject-cell chemistry">Hóa 10</td>
+                                <td class="subject-cell english">Anh 12</td>
+                                <td class="subject-cell literature">Văn 11</td>
+                                <td class="subject-cell math">Toán 10</td>
+                                <td class="subject-cell biology">Sinh 12</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold time-slot">8:45-10:15</td>
+                                <td class="subject-cell physics">Lý 12</td>
+                                <td class="subject-cell math">Toán 11</td>
+                                <td class="subject-cell english">Anh 10</td>
+                                <td class="subject-cell chemistry">Hóa 12</td>
+                                <td class="subject-cell math">Toán 11</td>
+                                <td class="subject-cell physics">Lý 10</td>
+                                <td class="subject-cell english">Anh 11</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold time-slot">10:30-12:00</td>
+                                <td class="subject-cell chemistry">Hóa 11</td>
+                                <td class="subject-cell english">Anh 12</td>
+                                <td class="subject-cell math">Toán 10</td>
+                                <td class="subject-cell biology">Sinh 11</td>
+                                <td class="subject-cell physics">Lý 12</td>
+                                <td class="subject-cell literature">Văn 10</td>
+                                <td class="subject-cell math">Toán 12</td>
+                            </tr>
+                            <tr class="break-row">
+                                <td class="fw-bold time-slot break">12:00-13:30</td>
+                                <td colspan="7" class="text-center break-cell">
+                                    <i class="bi bi-cup-hot me-2"></i>NGHỈ TRƯA
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold time-slot">13:30-15:00</td>
+                                <td class="subject-cell math">Toán 9</td>
+                                <td class="subject-cell physics">Lý 8</td>
+                                <td class="subject-cell english">Anh 9</td>
+                                <td class="subject-cell math">Toán 8</td>
+                                <td class="subject-cell english">Anh 8</td>
+                                <td class="subject-cell math">Toán 7</td>
+                                <td class="subject-cell physics">Lý 9</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold time-slot">15:15-16:45</td>
+                                <td class="subject-cell english">Anh 7</td>
+                                <td class="subject-cell math">Toán 6</td>
+                                <td class="subject-cell biology">Sinh 8</td>
+                                <td class="subject-cell english">Anh 6</td>
+                                <td class="subject-cell math">Toán 6</td>
+                                <td class="subject-cell english">Anh 9</td>
+                                <td class="subject-cell math">Toán 8</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold time-slot">17:00-18:30</td>
+                                <td class="subject-cell literature">Văn 9</td>
+                                <td class="subject-cell english">Anh 8</td>
+                                <td class="subject-cell literature">Văn 8</td>
+                                <td class="subject-cell literature">Văn 7</td>
+                                <td class="subject-cell biology">Sinh 9</td>
+                                <td class="subject-cell literature">Văn 6</td>
+                                <td class="subject-cell english">Anh 7</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold time-slot">19:00-20:30</td>
+                                <td class="subject-cell assessment">ĐGNL</td>
+                                <td class="subject-cell informatics">Tin học</td>
+                                <td class="subject-cell assessment">ĐGNL</td>
+                                <td class="subject-cell informatics">Tin học</td>
+                                <td class="subject-cell assessment">ĐGNL</td>
+                                <td class="subject-cell informatics">Tin học</td>
+                                <td class="subject-cell assessment">ĐGNL</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Legend -->
+                <div class="mt-4">
+                    <h6 class="fw-bold mb-3">Chú giải môn học:</h6>
+                    <div class="row g-2">
+                        <div class="col-md-3 col-6">
+                            <div class="legend-item">
+                                <span class="legend-color math"></span>
+                                Toán học
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="legend-item">
+                                <span class="legend-color physics"></span>
+                                Vật lý
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="legend-item">
+                                <span class="legend-color chemistry"></span>
+                                Hóa học
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="legend-item">
+                                <span class="legend-color english"></span>
+                                Tiếng Anh
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="legend-item">
+                                <span class="legend-color literature"></span>
+                                Ngữ văn
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="legend-item">
+                                <span class="legend-color biology"></span>
+                                Sinh học
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="legend-item">
+                                <span class="legend-color assessment"></span>
+                                ĐGNL
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="legend-item">
+                                <span class="legend-color informatics"></span>
+                                Tin học
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 p-3 bg-light rounded">
+                    <small class="text-muted">
+                        <strong><i class="bi bi-info-circle me-1"></i>Lưu ý:</strong>
+                        Thời khóa biểu có thể thay đổi tùy theo tình hình thực tế và số lượng học sinh đăng ký.
+                        Vui lòng liên hệ với trung tâm để biết thông tin chính xác nhất.
+                    </small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i>Đóng
+                </button>
+                <button type="button" class="btn btn-primary" onclick="printSchedule()">
+                    <i class="bi bi-printer me-1"></i>In thời khóa biểu
+                </button>
+                <button type="button" class="btn btn-success" onclick="downloadSchedule()">
+                    <i class="bi bi-download me-1"></i>Tải xuống PDF
+                </button>
+            </div>
+        </div>
+    </div>
 </div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Contact form submission
+            $('.contact-form').on('submit', function (e) {
+                e.preventDefault();
+
+                // Simulate form submission
+                const btn = $(this).find('button[type="submit"]');
+                const originalText = btn.html();
+
+                btn.html('<i class="bi bi-hourglass-split me-2"></i>Đang gửi...').prop('disabled', true);
+
+                setTimeout(function () {
+                    btn.html('<i class="bi bi-check-circle me-2"></i>Đã gửi!').removeClass('btn-primary').addClass('btn-success');
+
+                    setTimeout(function () {
+                        btn.html(originalText).prop('disabled', false).removeClass('btn-success').addClass('btn-primary');
+                    }, 2000);
+                }, 1500);
+            });
+        });
+
+        // Print schedule function
+        function printSchedule() {
+            const printContent = document.querySelector('#scheduleModal .modal-body').innerHTML;
+            const originalContent = document.body.innerHTML;
+
+            document.body.innerHTML = `
+                        <div style="padding: 20px;">
+                            <h2 style="text-align: center; margin-bottom: 20px;">Thời khóa biểu trung tâm KLMS</h2>
+                            ${printContent}
+                        </div>
+                    `;
+
+            window.print();
+            document.body.innerHTML = originalContent;
+            location.reload();
+        }
+
+        // Download schedule function
+        function downloadSchedule() {
+            // Simulate download
+            const link = document.createElement('a');
+            link.href = 'data:text/plain;charset=utf-8,Thời khóa biểu trung tâm KLMS - Tải xuống thành công!';
+            link.download = 'tkb_klms.txt';
+            link.click();
+
+            // Show notification
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="bi bi-check-circle me-1"></i>Đã tải xuống!';
+            btn.classList.remove('btn-success');
+            btn.classList.add('btn-secondary');
+
+            setTimeout(function () {
+                btn.innerHTML = originalText;
+                btn.classList.remove('btn-secondary');
+                btn.classList.add('btn-success');
+            }, 2000);
+        }
+    </script>
+}

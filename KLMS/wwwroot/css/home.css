@@ -1,0 +1,313 @@
+﻿
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .bg-purple {
+        background-color: #6f42c1 !important;
+    }
+
+    .hero-section {
+        position: relative;
+        overflow: hidden;
+    }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            opacity: 0.3;
+        }
+
+    .hero-stat {
+        text-align: center;
+        padding: 1rem;
+        background: rgba(255,255,255,0.1);
+        border-radius: 10px;
+        backdrop-filter: blur(10px);
+    }
+
+    .hero-icon {
+        background: rgba(255,255,255,0.1);
+        border-radius: 50%;
+        padding: 2rem;
+        display: inline-block;
+        backdrop-filter: blur(10px);
+    }
+
+    .subject-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        border: none;
+    }
+
+        .subject-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+    .card-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        font-size: 2rem;
+    }
+
+    .grades {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        margin-top: 1rem;
+    }
+
+    .grade-badge {
+        background: #f8f9fa;
+        border: 2px solid #dee2e6;
+        border-radius: 50%;
+        width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 0.875rem;
+        color: #495057;
+        transition: all 0.3s ease;
+    }
+
+        .grade-badge:hover {
+            background: #007bff;
+            border-color: #007bff;
+            color: white;
+            transform: scale(1.1);
+        }
+
+.schedule-preview {
+    position: relative;
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+    .schedule-preview img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 15px;
+    }
+
+.schedule-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.schedule-preview:hover .schedule-overlay {
+    opacity: 1;
+}
+
+.schedule-preview:hover img {
+    filter: brightness(0.7);
+}
+
+.quick-info-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.icon-wrapper {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.feature-card {
+    padding: 2rem;
+    border-radius: 15px;
+    background: white;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+    }
+
+.feature-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    font-size: 2rem;
+}
+
+.contact-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.contact-form .form-control {
+    border-radius: 10px;
+    border: 2px solid #e9ecef;
+    padding: 0.75rem 1rem;
+}
+
+    .contact-form .form-control:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
+    }
+
+.schedule-table {
+    font-size: 0.9rem;
+}
+
+    .schedule-table td, .schedule-table th {
+        vertical-align: middle;
+        text-align: center;
+        padding: 0.75rem 0.5rem;
+    }
+
+.time-slot {
+    background-color: #f8f9fa !important;
+}
+
+.break-cell {
+    background-color: #fff3cd !important;
+    font-style: italic;
+    color: #856404;
+}
+
+.subject-cell {
+    font-weight: 500;
+    border-radius: 5px;
+    color: white !important;
+}
+
+    .subject-cell.math {
+        background-color: #007bff !important;
+    }
+
+    .subject-cell.physics {
+        background-color: #6610f2 !important;
+    }
+
+    .subject-cell.chemistry {
+        background-color: #fd7e14 !important;
+    }
+
+    .subject-cell.english {
+        background-color: #198754 !important;
+    }
+
+    .subject-cell.literature {
+        background-color: #dc3545 !important;
+    }
+
+    .subject-cell.biology {
+        background-color: #20c997 !important;
+    }
+
+    .subject-cell.assessment {
+        background-color: #6f42c1 !important;
+    }
+
+    .subject-cell.informatics {
+        background-color: #495057 !important;
+    }
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    font-size: 0.875rem;
+}
+
+.legend-color {
+    width: 20px;
+    height: 20px;
+    border-radius: 3px;
+    margin-right: 0.5rem;
+    display: inline-block;
+}
+
+    .legend-color.math {
+        background-color: #007bff;
+    }
+
+    .legend-color.physics {
+        background-color: #6610f2;
+    }
+
+    .legend-color.chemistry {
+        background-color: #fd7e14;
+    }
+
+    .legend-color.english {
+        background-color: #198754;
+    }
+
+    .legend-color.literature {
+        background-color: #dc3545;
+    }
+
+    .legend-color.biology {
+        background-color: #20c997;
+    }
+
+    .legend-color.assessment {
+        background-color: #6f42c1;
+    }
+
+    .legend-color.informatics {
+        background-color: #495057;
+    }
+
+@media (max-width: 768px) {
+    .hero-section h1 {
+        font-size: 2.5rem;
+    }
+
+    .subject-card {
+        padding: 1.5rem;
+    }
+
+    .card-icon, .feature-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+    }
+
+    .schedule-table {
+        font-size: 0.75rem;
+    }
+
+        .schedule-table td, .schedule-table th {
+            padding: 0.5rem 0.25rem;
+        }
+}

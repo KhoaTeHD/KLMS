@@ -5,7 +5,7 @@
 
     // Lấy role của người dùng từ ViewBag
     var userRole = ViewBag.UserRole as string;
-    
+
     var isTeacherOrAdmin = userRole?.ToLower() == "teacher" || userRole?.ToLower() == "admin";
 
     // Kiểm tra tab active
@@ -299,70 +299,187 @@
     <div class="modal fade" id="addLectureModal" tabindex="-1" aria-labelledby="addLectureModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header bg-primary bg-opacity-25 text-primary">
-                    <h5 class="modal-title" id="addLectureModalLabel">Thêm bài giảng mới</h5>
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addLectureModalLabel">
+                        <i class="bi bi-journal-plus me-2"></i>Thêm bài giảng mới
+                    </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
+
                 <form asp-action="AddLecture" asp-route-classId="@Model.Id" method="post" enctype="multipart/form-data">
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label for="lectureTitle" class="form-label">Tiêu đề bài giảng</label>
+                            <label for="lectureTitle" class="form-label">
+                                <i class="bi bi-type me-1"></i>Tiêu đề bài giảng
+                            </label>
                             <input type="text" class="form-control" id="lectureTitle" name="Title" required>
                         </div>
+
                         <div class="mb-3">
-                            <label for="lectureDescription" class="form-label">Mô tả</label>
+                            <label for="lectureDescription" class="form-label">
+                                <i class="bi bi-chat-text me-1"></i>Mô tả
+                            </label>
                             <textarea class="form-control" id="lectureDescription" name="Description" rows="3"></textarea>
                         </div>
+
                         <div class="mb-3">
-                            <label for="lectureFile" class="form-label">Tải lên tệp bài giảng (PDF, PPT)</label>
-                            <input class="form-control" type="file" id="lectureFile" name="LectureFile" accept=".pdf,.ppt,.pptx">
+                            <label for="lectureFile" class="form-label">
+                                <i class="bi bi-cloud-upload me-1"></i>Tệp bài giảng
+                            </label>
+                            <input class="form-control" type="file" id="lectureFile" name="LectureFile" accept=".pdf,.ppt,.pptx,.doc,.docx">
+                            <div class="form-text">
+                                Hỗ trợ: PDF, PPT, PPTX, DOC, DOCX (Tối đa 50MB)
+                            </div>
                         </div>
                     </div>
+
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                        <button type="submit" class="btn btn-primary">Thêm bài giảng</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-lg me-1"></i>Tạo bài giảng
+                        </button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- Modal Thêm Học Sinh -->
+    <!-- 2. Modal Thêm Học Sinh -->
     <div class="modal fade" id="addStudentModal" tabindex="-1" aria-labelledby="addStudentModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
-                <div class="modal-header bg-primary bg-opacity-25 text-primary">
-                    <h5 class="modal-title" id="addStudentModalLabel">Thêm học sinh vào lớp</h5>
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addStudentModalLabel">
+                        <i class="bi bi-person-plus me-2"></i>Thêm học sinh vào lớp
+                    </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
+
                 <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="searchStudent" class="form-label">Tìm kiếm học sinh</label>
+                    <!-- Search Section -->
+                    <div class="mb-4">
+                        <label for="searchStudent" class="form-label">
+                            <i class="bi bi-search me-1"></i>Tìm kiếm học sinh
+                        </label>
                         <div class="input-group">
-                            <input type="text" class="form-control" id="searchStudent" placeholder="Nhập tên hoặc email học sinh...">
-                            <button class="btn btn-outline-primary" type="button" id="searchStudentBtn">
-                                <i class="bi bi-search"></i> Tìm
+                            <input type="text"
+                                   class="form-control"
+                                   id="searchStudent"
+                                   placeholder="Nhập tên hoặc email học sinh..."
+                                   autocomplete="off">
+                            <button class="btn btn-primary" type="button" id="searchStudentBtn">
+                                <i class="bi bi-search"></i>
+                                <span class="d-none d-sm-inline ms-1">Tìm</span>
                             </button>
+                        </div>
+                        <div class="form-text">
+                            Nhập ít nhất 2 ký tự để bắt đầu tìm kiếm
                         </div>
                     </div>
 
-                    <div id="searchResults" class="mt-3 d-none">
-                        <h6>Kết quả tìm kiếm:</h6>
-                        <div class="list-group" id="studentsSearchResults">
+                    <!-- Loading State -->
+                    <div id="searchLoading" class="text-center py-4 d-none">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Đang tìm kiếm...</span>
+                        </div>
+                        <p class="mt-2 text-muted">Đang tìm kiếm học sinh...</p>
+                    </div>
+
+                    <!-- Search Results -->
+                    <div id="searchResults" class="d-none">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="mb-0">Kết quả tìm kiếm</h6>
+                            <span class="badge bg-primary" id="resultCount">0</span>
+                        </div>
+
+                        <div id="studentsSearchResults" style="max-height: 300px; overflow-y: auto;">
                             <!-- Kết quả tìm kiếm sẽ được hiển thị ở đây -->
                         </div>
                     </div>
+
+                    <!-- Empty State -->
+                    <div id="emptyState" class="text-center py-4">
+                        <i class="bi bi-people text-muted" style="font-size: 3rem;"></i>
+                        <h6 class="text-muted mt-2">Tìm kiếm học sinh</h6>
+                        <p class="text-muted mb-0">Nhập tên hoặc email để tìm học sinh</p>
+                    </div>
                 </div>
+
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- 3. Modal Xóa Lớp Học -->
+    <div class="modal fade" id="deleteClassModal_@Model.Id" tabindex="-1" aria-labelledby="deleteClassModalLabel_@Model.Id" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="deleteClassModalLabel_@Model.Id">
+                        <i class="bi bi-exclamation-triangle me-2"></i>Xác nhận xóa lớp học
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="alert alert-danger">
+                        <h6 class="alert-heading">
+                            <i class="bi bi-exclamation-triangle me-2"></i>Cảnh báo!
+                        </h6>
+                        <p class="mb-0">
+                            Bạn đang chuẩn bị xóa lớp học <strong>"@Model.ClassName"</strong>.
+                            Thao tác này sẽ xóa vĩnh viễn:
+                        </p>
+                    </div>
+
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex align-items-center">
+                            <i class="bi bi-journal-x text-danger me-2"></i>
+                            Tất cả bài giảng (<strong>@(Model.Lectures?.Count ?? 0)</strong> bài)
+                        </li>
+                        <li class="list-group-item d-flex align-items-center">
+                            <i class="bi bi-people text-danger me-2"></i>
+                            Danh sách học sinh (<strong>@(Model.Students?.Count ?? 0)</strong> học sinh)
+                        </li>
+                        <li class="list-group-item d-flex align-items-center">
+                            <i class="bi bi-file-earmark-x text-danger me-2"></i>
+                            Tất cả tệp tin đã tải lên
+                        </li>
+                    </ul>
+
+                    <div class="mt-3">
+                        <label for="confirmClassName" class="form-label">
+                            <strong>Để xác nhận, nhập tên lớp học:</strong>
+                        </label>
+                        <input type="text"
+                               class="form-control"
+                               id="confirmClassName"
+                               placeholder="@Model.ClassName"
+                               autocomplete="off">
+                        <div class="form-text text-danger">
+                            Nhập chính xác: <strong>@Model.ClassName</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <form asp-action="Delete" asp-route-id="@Model.Id" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-danger" id="confirmDeleteBtn" disabled>
+                            <i class="bi bi-trash3 me-1"></i>Xóa lớp học
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 }
 
-<!-- Bao gồm modal xác nhận xóa lớp học -->
-// await Html.PartialAsync("_DeleteClassModal", Model)
+<!-- Toast Container -->
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999;"></div>
+
 
 @section Styles {
     <style>
@@ -386,99 +503,197 @@
     <script>
         // Tìm kiếm học sinh trong danh sách
         $(document).ready(function () {
-            // Tìm kiếm học sinh trong danh sách hiện tại
-            $("#studentSearchInput").on("keyup", function () {
-                var value = $(this).val().toLowerCase();
-                $(".student-item").filter(function () {
-                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-                });
+            // File upload validation
+            $('#lectureFile').on('change', function () {
+                const file = this.files[0];
+                if (file) {
+                    // Check file size (50MB)
+                    if (file.size > 50 * 1024 * 1024) {
+                        showToast('File quá lớn. Vui lòng chọn file nhỏ hơn 50MB', 'warning');
+                        this.value = '';
+                        return;
+                    }
+
+                    // Check file type
+                    const allowedTypes = ['.pdf', '.ppt', '.pptx', '.doc', '.docx'];
+                    const fileExt = '.' + file.name.split('.').pop().toLowerCase();
+                    if (!allowedTypes.includes(fileExt)) {
+                        showToast('Định dạng file không được hỗ trợ', 'warning');
+                        this.value = '';
+                        return;
+                    }
+
+                    showToast('File đã được chọn: ' + file.name, 'success');
+                }
             });
 
-            // Tìm kiếm học sinh để thêm vào lớp
-            $("#searchStudentBtn").click(function () {
-                var query = $("#searchStudent").val();
-                if (query.length < 2) {
-                    alert("Vui lòng nhập ít nhất 2 ký tự để tìm kiếm");
-                    return;
-                }
-
-                // Gửi AJAX request để tìm kiếm học sinh
-                $.ajax({
-                    url: '@Url.Action("SearchStudents", "Classes")',
-                    type: 'GET',
-                    data: {
-                        query: query,
-                        classId: @Model.Id
-                            },
-                    success: function (data) {
-                        $("#searchResults").removeClass("d-none");
-                        renderSearchResults(data);
-                    },
-                    error: function (error) {
-                        console.error("Lỗi khi tìm kiếm học sinh:", error);
-                        alert("Đã xảy ra lỗi khi tìm kiếm. Vui lòng thử lại sau.");
-                    }
-                });
+            // Delete confirmation
+            $('#confirmClassName').on('input', function () {
+                const expectedName = '@Model.ClassName';
+                const confirmBtn = $('#confirmDeleteBtn');
+                confirmBtn.prop('disabled', $(this).val() !== expectedName);
             });
 
-            // Hiển thị kết quả tìm kiếm học sinh
-            function renderSearchResults(students) {
-                var resultsContainer = $("#studentsSearchResults");
-                resultsContainer.empty();
+            // Search students
+            let searchTimeout;
+            $('#searchStudent').on('input', function () {
+                clearTimeout(searchTimeout);
+                const query = $(this).val().trim();
 
-                if (students.length === 0) {
-                    resultsContainer.append('<div class="alert alert-info">Không tìm thấy học sinh nào phù hợp với từ khóa.</div>');
-                    return;
+                if (query.length >= 2) {
+                    searchTimeout = setTimeout(() => performSearch(query), 500);
+                } else {
+                    showEmptyState();
                 }
+            });
 
-                students.forEach(function (student) {
-                    var item = `
-                                <div class="list-group-item">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <h6 class="mb-1">${student.fullName}</h6>
-                                            <small class="text-muted">${student.email}</small>
-                                        </div>
-                                        <button class="btn btn-sm btn-primary add-student-btn" data-student-id="${student.id}">
-                                            <i class="bi bi-plus-circle"></i> Thêm
-                                        </button>
-                                    </div>
-                                </div>
-                            `;
-                    resultsContainer.append(item);
-                });
+            $('#searchStudentBtn').on('click', function () {
+                const query = $('#searchStudent').val().trim();
+                if (query.length >= 2) {
+                    performSearch(query);
+                } else {
+                    showToast('Vui lòng nhập ít nhất 2 ký tự', 'warning');
+                }
+            });
 
-                // Xử lý sự kiện khi nhấn nút thêm học sinh
-                $(".add-student-btn").click(function () {
-                    var studentId = $(this).data("student-id");
-                    addStudentToClass(studentId);
-                });
-            }
-
-            // Thêm học sinh vào lớp
-            function addStudentToClass(studentId) {
-                $.ajax({
-                    url: '@Url.Action("AddStudentToClass", "Classes")',
-                    type: 'POST',
-                    data: {
-                        studentId: studentId,
-                        classId: @Model.Id
-                            },
-                    success: function (response) {
-                        if (response.success) {
-                            // Reload lại trang sau khi thêm thành công
-                            location.reload();
-                        } else {
-                            alert(response.message || "Có lỗi xảy ra khi thêm học sinh vào lớp.");
-                        }
-                    },
-                    error: function (error) {
-                        console.error("Lỗi khi thêm học sinh:", error);
-                        alert("Đã xảy ra lỗi khi thêm học sinh. Vui lòng thử lại sau.");
+            // Enter key search
+            $('#searchStudent').on('keypress', function (e) {
+                if (e.which === 13) {
+                    const query = $(this).val().trim();
+                    if (query.length >= 2) {
+                        performSearch(query);
                     }
-                });
-            }
+                }
+            });
         });
+
+        function performSearch(query) {
+            showLoading();
+
+            $.ajax({
+                url: '@Url.Action("SearchStudents", "Class")',
+                type: 'GET',
+                data: { query: query, classId: @Model.Id },
+                success: function (data) {
+                    hideLoading();
+                    renderSearchResults(data);
+                },
+                error: function () {
+                    hideLoading();
+                    showToast('Có lỗi xảy ra khi tìm kiếm', 'danger');
+                }
+            });
+        }
+
+        function renderSearchResults(students) {
+            const container = $('#studentsSearchResults');
+            const results = $('#searchResults');
+            const resultCount = $('#resultCount');
+
+            hideEmptyState();
+            results.removeClass('d-none');
+            resultCount.text(students.length);
+
+            if (students.length === 0) {
+                container.html(`
+                        <div class="text-center py-3">
+                            <i class="bi bi-search text-muted" style="font-size: 2rem;"></i>
+                            <p class="text-muted mt-2 mb-0">Không tìm thấy học sinh nào</p>
+                        </div>
+                    `);
+                return;
+            }
+
+            const html = students.map(student => `
+                    <div class="student-result-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1">${student.fullName}</h6>
+                                <small class="text-muted">
+                                    <i class="bi bi-envelope me-1"></i>${student.email}
+                                </small>
+                            </div>
+                            <button class="btn btn-primary btn-sm" onclick="addStudentToClass('${student.id}')">
+                                <i class="bi bi-plus-circle me-1"></i>Thêm
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+
+            container.html(html);
+        }
+
+        function addStudentToClass(studentId) {
+            const btn = $(`button[onclick="addStudentToClass('${studentId}')"]`);
+            const originalText = btn.html();
+
+            btn.html('<span class="spinner-border spinner-border-sm me-1"></span>Đang thêm...').prop('disabled', true);
+
+            $.ajax({
+                url: '@Url.Action("AddStudentToClass", "Class")',
+                type: 'POST',
+                data: {
+                    studentId: studentId,
+                    classId: @Model.Id,
+                    __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                },
+                success: function (response) {
+                    if (response.success) {
+                        btn.html('<i class="bi bi-check-lg me-1"></i>Đã thêm').removeClass('btn-primary').addClass('btn-success');
+                        showToast('Thêm học sinh thành công!', 'success');
+                        setTimeout(() => location.reload(), 1500);
+                    } else {
+                        showToast(response.message || 'Có lỗi xảy ra', 'danger');
+                        btn.html(originalText).prop('disabled', false);
+                    }
+                },
+                error: function () {
+                    showToast('Có lỗi xảy ra khi thêm học sinh', 'danger');
+                    btn.html(originalText).prop('disabled', false);
+                }
+            });
+        }
+
+        function showLoading() {
+            $('#searchLoading').removeClass('d-none');
+            $('#searchResults').addClass('d-none');
+            hideEmptyState();
+        }
+
+        function hideLoading() {
+            $('#searchLoading').addClass('d-none');
+        }
+
+        function showEmptyState() {
+            $('#emptyState').removeClass('d-none');
+            $('#searchResults').addClass('d-none');
+            hideLoading();
+        }
+
+        function hideEmptyState() {
+            $('#emptyState').addClass('d-none');
+        }
+
+        function showToast(message, type = 'info') {
+            const toastClass = type === 'danger' ? 'bg-danger' : `bg-${type}`;
+            const toast = $(`
+                    <div class="toast align-items-center text-white ${toastClass} border-0" role="alert">
+                        <div class="d-flex">
+                            <div class="toast-body">${message}</div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                        </div>
+                    </div>
+                `);
+
+            $('.toast-container').append(toast);
+
+            const bsToast = new bootstrap.Toast(toast[0]);
+            bsToast.show();
+
+            toast.on('hidden.bs.toast', function () {
+                $(this).remove();
+            });
+        }
 
         // Xử lý xóa học sinh khỏi lớp
         function removeStudent(studentId) {
@@ -489,7 +704,7 @@
                     data: {
                         studentId: studentId,
                         classId: @Model.Id
-                            },
+                                    },
                     success: function (response) {
                         if (response.success) {
                             // Reload lại trang sau khi xóa thành công
@@ -518,7 +733,7 @@
 
             // Gửi AJAX request để lấy nội dung bài giảng
             $.ajax({
-                url: '@Url.Action("GetLectureContent", "Classes")',
+                url: '@Url.Action("GetLectureContent", "Class")',
                 type: 'GET',
                 data: { lectureId: lectureId },
                 success: function (data) {
@@ -534,40 +749,35 @@
         // Hiển thị nội dung bài giảng
         function renderLectureContent(lecture) {
             var content = `
-                        <div class="d-flex justify-content-between align-items-start mb-4">
-                            <div>
-                                <h3>${lecture.title}</h3>
-                                <p class="text-muted">
-                                    <i class="bi bi-calendar3"></i> Ngày tạo: ${lecture.createdDate} |
-                                    <i class="bi bi-clock-history"></i> Cập nhật: ${lecture.lastModified}
-                                </p>
-                            </div>
+                                <div class="d-flex justify-content-between align-items-start mb-4">
+                                    <div>
+                                        <h3>${lecture.title}</h3>
+                                        <p class="text-muted">
+                                            <i class="bi bi-calendar3"></i> Ngày tạo: ${lecture.createdDate} |
+                                            <i class="bi bi-clock-history"></i> Cập nhật: ${lecture.lastModified}
+                                        </p>
+                                    </div>
         @if (isTeacherOrAdmin)
         {
-                                    <div class="dropdown">
-                                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="bi bi-three-dots-vertical"></i>
-                                        </button>
-                                        <ul class="dropdown-menu dropdown-menu-end">
-                                            <li><a class="dropdown-item" href="#" onclick="editLecture(${lecture.id})"><i class="bi bi-pencil-square me-2"></i>Chỉnh sửa</a></li>
-                                            <li><hr class="dropdown-divider"></li>
-                                            <li><a class="dropdown-item text-danger" href="#" onclick="deleteLecture(${lecture.id})"><i class="bi bi-trash me-2"></i>Xóa</a></li>
-                                        </ul>
-                                    </div>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                        <i class="bi bi-three-dots-vertical"></i>
+                                                    </button>
+                                                    <ul class="dropdown-menu dropdown-menu-end">
+                                                        <li><a class="dropdown-item" href="#" onclick="editLecture(${lecture.id})"><i class="bi bi-pencil-square me-2"></i>Chỉnh sửa</a></li>
+                                                        <li><hr class="dropdown-divider"></li>
+                                                        <li><a class="dropdown-item text-danger" href="#" onclick="deleteLecture(${lecture.id})"><i class="bi bi-trash me-2"></i>Xóa</a></li>
+                                                    </ul>
+                                                </div>
         }
-                        </div>
+                                </div>
 
-                        <div class="card mb-4">
-                            <div class="card-body">
-                                <h5>Mô tả bài giảng</h5>
-                                <p>${lecture.description || 'Không có mô tả.'}</p>
-                            </div>
-                        </div>
 
-                        <div class="lecture-file-container">
-                            ${renderLectureFile(lecture)}
-                        </div>
-                    `;
+
+                                <div class="lecture-file-container">
+                                    ${renderLectureFile(lecture)}
+                                </div>
+                            `;
 
             $(".lecture-content").html(content);
         }
@@ -582,33 +792,33 @@
 
             if (fileExt === 'pdf') {
                 return `
-                            <div class="ratio ratio-16x9" style="height: 600px;">
-                                <iframe src="${lecture.filePath}" allowfullscreen></iframe>
-                            </div>
-                        `;
+                                    <div class="ratio ratio-16x9" style="height: 600px;">
+                                        <iframe src="${lecture.filePath}" allowfullscreen></iframe>
+                                    </div>
+                                `;
             } else if (fileExt === 'ppt' || fileExt === 'pptx') {
                 return `
-                            <div class="card">
-                                <div class="card-body text-center">
-                                    <i class="bi bi-file-earmark-slides text-primary" style="font-size: 3rem;"></i>
-                                    <h5 class="mt-3">Tệp PowerPoint</h5>
-                                    <p>Bạn cần tải xuống để xem tệp này.</p>
-                                    <a href="${lecture.filePath}" class="btn btn-primary" download>
-                                        <i class="bi bi-download me-1"></i> Tải xuống
-                                    </a>
-                                </div>
-                            </div>
-                        `;
+                                    <div class="card">
+                                        <div class="card-body text-center">
+                                            <i class="bi bi-file-earmark-slides text-primary" style="font-size: 3rem;"></i>
+                                            <h5 class="mt-3">Tệp PowerPoint</h5>
+                                            <p>Bạn cần tải xuống để xem tệp này.</p>
+                                            <a href="${lecture.filePath}" class="btn btn-primary" download>
+                                                <i class="bi bi-download me-1"></i> Tải xuống
+                                            </a>
+                                        </div>
+                                    </div>
+                                `;
             } else {
                 return `
-                            <div class="alert alert-warning">
-                                <i class="bi bi-exclamation-triangle me-2"></i>
-                                Định dạng file không được hỗ trợ để xem trực tiếp.
-                                <a href="${lecture.filePath}" class="btn btn-sm btn-outline-primary ms-3" download>
-                                    <i class="bi bi-download me-1"></i> Tải xuống
-                                </a>
-                            </div>
-                        `;
+                                    <div class="alert alert-warning">
+                                        <i class="bi bi-exclamation-triangle me-2"></i>
+                                        Định dạng file không được hỗ trợ để xem trực tiếp.
+                                        <a href="${lecture.filePath}" class="btn btn-sm btn-outline-primary ms-3" download>
+                                            <i class="bi bi-download me-1"></i> Tải xuống
+                                        </a>
+                                    </div>
+                                `;
             }
         }
 
@@ -623,41 +833,41 @@
                 success: function (data) {
                     // Tạo modal chỉnh sửa bài giảng
                     var modalHtml = `
-                                <div class="modal fade" id="editLectureModal_${lectureId}" tabindex="-1" aria-labelledby="editLectureModalLabel_${lectureId}" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered">
-                                        <div class="modal-content">
-                                            <div class="modal-header bg-primary bg-opacity-25 text-primary">
-                                                <h5 class="modal-title" id="editLectureModalLabel_${lectureId}">Chỉnh sửa bài giảng</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <form action="@Url.Action("EditLecture", "Classes")" method="post" enctype="multipart/form-data">
-                                                <div class="modal-body">
-                                                    <input type="hidden" name="Id" value="${data.id}">
-                                                    <input type="hidden" name="ClassId" value="${data.classId}">
+                                        <div class="modal fade" id="editLectureModal_${lectureId}" tabindex="-1" aria-labelledby="editLectureModalLabel_${lectureId}" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal-content">
+                                                    <div class="modal-header bg-primary bg-opacity-25 text-primary">
+                                                        <h5 class="modal-title" id="editLectureModalLabel_${lectureId}">Chỉnh sửa bài giảng</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <form action="@Url.Action("EditLecture", "Classes")" method="post" enctype="multipart/form-data">
+                                                        <div class="modal-body">
+                                                            <input type="hidden" name="Id" value="${data.id}">
+                                                            <input type="hidden" name="ClassId" value="${data.classId}">
 
-                                                    <div class="mb-3">
-                                                        <label for="lectureTitle_${lectureId}" class="form-label">Tiêu đề bài giảng</label>
-                                                        <input type="text" class="form-control" id="lectureTitle_${lectureId}" name="Title" value="${data.title}" required>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label for="lectureDescription_${lectureId}" class="form-label">Mô tả</label>
-                                                        <textarea class="form-control" id="lectureDescription_${lectureId}" name="Description" rows="3">${data.description || ''}</textarea>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label for="lectureFile_${lectureId}" class="form-label">Thay đổi tệp bài giảng (PDF, PPT)</label>
-                                                        <input class="form-control" type="file" id="lectureFile_${lectureId}" name="LectureFile" accept=".pdf,.ppt,.pptx">
-                                                        <small class="form-text text-muted">Để trống nếu bạn không muốn thay đổi tệp hiện tại.</small>
-                                                    </div>
+                                                            <div class="mb-3">
+                                                                <label for="lectureTitle_${lectureId}" class="form-label">Tiêu đề bài giảng</label>
+                                                                <input type="text" class="form-control" id="lectureTitle_${lectureId}" name="Title" value="${data.title}" required>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label for="lectureDescription_${lectureId}" class="form-label">Mô tả</label>
+                                                                <textarea class="form-control" id="lectureDescription_${lectureId}" name="Description" rows="3">${data.description || ''}</textarea>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label for="lectureFile_${lectureId}" class="form-label">Thay đổi tệp bài giảng (PDF, PPT)</label>
+                                                                <input class="form-control" type="file" id="lectureFile_${lectureId}" name="LectureFile" accept=".pdf,.ppt,.pptx">
+                                                                <small class="form-text text-muted">Để trống nếu bạn không muốn thay đổi tệp hiện tại.</small>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                                            <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                                                        </div>
+                                                    </form>
                                                 </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                                                    <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
-                                                </div>
-                                            </form>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
-                            `;
+                                    `;
 
                     // Thêm modal vào body và hiển thị
                     $('body').append(modalHtml);
