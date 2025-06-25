@@ -1,0 +1,141 @@
+﻿@{
+    ViewData["Title"] = "Trang không tồn tại - 404";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="row justify-content-center align-items-center min-vh-75">
+        <div class="col-lg-8 col-xl-6">
+            <div class="text-center">
+                <!-- 404 Number -->
+                <div class="error-number mb-4">
+                    <h1 class="display-1 fw-bold text-primary mb-0" style="font-size: 8rem;">404</h1>
+                </div>
+
+                <!-- Error Icon -->
+                <div class="error-icon mb-4">
+                    <i class="bi bi-search" style="font-size: 4rem; color: #6c757d;"></i>
+                </div>
+
+                <!-- Error Message -->
+                <div class="error-message mb-5">
+                    <h2 class="h3 fw-bold mb-3">Trang không tồn tại</h2>
+                    <p class="text-muted mb-4 fs-5">
+                        Rất tiếc, chúng tôi không thể tìm thấy trang bạn đang tìm kiếm.
+                        Trang này có thể đã bị xóa, di chuyển hoặc bạn đã nhập sai địa chỉ.
+                    </p>
+                </div>
+
+                <!-- Suggestions -->
+                <div class="error-suggestions mb-5">
+                    <div class="row g-3 justify-content-center">
+                        <div class="col-md-4">
+                            <div class="suggestion-card h-100 p-3 bg-light rounded">
+                                <i class="bi bi-house-door text-primary fs-2 mb-2"></i>
+                                <h6>Về trang chủ</h6>
+                                <small class="text-muted">Quay lại trang chủ và bắt đầu lại</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="suggestion-card h-100 p-3 bg-light rounded">
+                                <i class="bi bi-arrow-left text-success fs-2 mb-2"></i>
+                                <h6>Quay lại</h6>
+                                <small class="text-muted">Quay lại trang trước đó</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="suggestion-card h-100 p-3 bg-light rounded">
+                                <i class="bi bi-book text-info fs-2 mb-2"></i>
+                                <h6>Xem lớp học</h6>
+                                <small class="text-muted">Truy cập danh sách lớp học</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="error-actions">
+                    <div class="d-flex flex-column flex-md-row gap-3 justify-content-center">
+                        <a href="@Url.Action("Index", "Home")" class="btn btn-primary btn-lg px-4">
+                            <i class="bi bi-house-door me-2"></i>Về trang chủ
+                        </a>
+                        <button onclick="history.back()" class="btn btn-outline-secondary btn-lg px-4">
+                            <i class="bi bi-arrow-left me-2"></i>Quay lại
+                        </button>
+                        <a href="@Url.Action("Index", "Class")" class="btn btn-outline-info btn-lg px-4">
+                            <i class="bi bi-book me-2"></i>Xem lớp học
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Search Suggestion -->
+                <div class="search-suggestion mt-5 pt-4 border-top">
+                    <h6 class="mb-3">Hoặc thử tìm kiếm:</h6>
+                    <div class="row justify-content-center">
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Tìm kiếm lớp học, bài giảng..." id="searchInput">
+                                <button class="btn btn-outline-primary" type="button" onclick="performSearch()">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Popular Links -->
+                <div class="popular-links mt-5">
+                    <h6 class="text-muted mb-3">Các trang phổ biến:</h6>
+                    <div class="d-flex flex-wrap justify-content-center gap-2">
+                        <a href="@Url.Action("Index", "Home")" class="btn btn-sm btn-outline-primary">Trang chủ</a>
+                        <a href="@Url.Action("Index", "Class")" class="btn btn-sm btn-outline-primary">Lớp học</a>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <a href="/Identity/Account/Manage" class="btn btn-sm btn-outline-primary">Hồ sơ cá nhân</a>
+                        }
+                        else
+                        {
+                            <a href="/Identity/Account/Login" class="btn btn-sm btn-outline-primary">Đăng nhập</a>
+                            <a href="/Identity/Account/Register" class="btn btn-sm btn-outline-primary">Đăng ký</a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function performSearch() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (query) {
+                // Redirect to search results or classes page with query
+                window.location.href = '@Url.Action("Index", "Class")' + '?search=' + encodeURIComponent(query);
+            } else {
+                alert('Vui lòng nhập từ khóa tìm kiếm');
+            }
+        }
+
+        // Allow enter key to search
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
+
+        // Add some animation on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const elements = document.querySelectorAll('.error-number, .error-icon, .error-message, .error-suggestions, .error-actions');
+            elements.forEach((el, index) => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    el.style.transition = 'all 0.6s ease';
+                    el.style.opacity = '1';
+                    el.style.transform = 'translateY(0)';
+                }, index * 150);
+            });
+        });
+    </script>
+}

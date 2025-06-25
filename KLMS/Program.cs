@@ -28,7 +28,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Identity/Account/Login";
     options.LogoutPath = "/Identity/Account/Logout";
-    options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+    options.AccessDeniedPath = "/Home/Error403";
 });
 
 builder.Services.AddTransient<IEmailSender, EmailSender>();
@@ -63,6 +63,9 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Xu ly cac status code error (404, 403, etc.)
+app.UseStatusCodePagesWithReExecute("/Home/ErrorStatus/{0}");
 
 app.MapControllerRoute(
     name: "admin",

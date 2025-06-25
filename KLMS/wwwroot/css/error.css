@@ -1,0 +1,91 @@
+﻿.min-vh-75 {
+    min-height: 75vh;
+}
+
+.error-number h1 {
+    background: linear-gradient(135deg, #ffc107 0%, #ff8c00 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: none;
+}
+
+.permission-info .alert {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+}
+
+.error-actions .btn {
+    transition: all 0.3s ease;
+}
+
+    .error-actions .btn:hover {
+        transform: translateY(-2px);
+    }
+
+.contact-support .card {
+    transition: all 0.3s ease;
+}
+
+    .contact-support .card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+
+.available-pages .btn {
+    margin: 0.25rem;
+}
+
+@media (max-width: 768px) {
+    .error-number h1 {
+        font-size: 6rem !important;
+    }
+
+    .error-icon i {
+        font-size: 3rem !important;
+    }
+}
+
+.min-vh-75 {
+    min-height: 75vh;
+}
+
+.error-number h1 {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: none;
+}
+
+.suggestion-card {
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+
+    .suggestion-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        border-color: #dee2e6;
+    }
+
+.error-actions .btn {
+    transition: all 0.3s ease;
+}
+
+    .error-actions .btn:hover {
+        transform: translateY(-2px);
+    }
+
+.popular-links .btn {
+    margin: 0.25rem;
+}
+
+@media (max-width: 768px) {
+    .error-number h1 {
+        font-size: 6rem !important;
+    }
+
+    .error-icon i {
+        font-size: 3rem !important;
+    }
+}

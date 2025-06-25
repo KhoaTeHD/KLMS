@@ -1,0 +1,202 @@
+﻿@{
+    ViewData["Title"] = "Truy cập bị từ chối - 403";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="row justify-content-center align-items-center min-vh-75">
+        <div class="col-lg-8 col-xl-6">
+            <div class="text-center">
+                <!-- 403 Number -->
+                <div class="error-number mb-4">
+                    <h1 class="display-1 fw-bold text-warning mb-0" style="font-size: 8rem;">403</h1>
+                </div>
+
+                <!-- Error Icon -->
+                <div class="error-icon mb-4">
+                    <i class="bi bi-shield-exclamation" style="font-size: 4rem; color: #dc3545;"></i>
+                </div>
+
+                <!-- Error Message -->
+                <div class="error-message mb-5">
+                    <h2 class="h3 fw-bold mb-3">Truy cập bị từ chối</h2>
+                    <p class="text-muted mb-4 fs-5">
+                        Bạn không có quyền truy cập vào trang này.
+                        Vui lòng liên hệ quản trị viên hoặc đăng nhập với tài khoản có quyền phù hợp.
+                    </p>
+                </div>
+
+                <!-- Permission Info -->
+                <div class="permission-info mb-5">
+                    <div class="alert alert-warning border-0 shadow-sm">
+                        <div class="d-flex align-items-start">
+                            <i class="bi bi-info-circle-fill fs-4 me-3 text-warning"></i>
+                            <div class="text-start">
+                                <h6 class="alert-heading mb-2">Thông tin quyền truy cập:</h6>
+                                <ul class="mb-0 ps-3">
+                                    <li>Trang này yêu cầu quyền đặc biệt</li>
+                                    <li>Bạn có thể cần đăng nhập với tài khoản khác</li>
+                                    <li>Hoặc liên hệ quản trị viên để được cấp quyền</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Status -->
+                <div class="user-status mb-5">
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <div class="card border-0 bg-light">
+                            <div class="card-body">
+                                <h6 class="card-title">
+                                    <i class="bi bi-person-check text-success me-2"></i>
+                                    Trạng thái đăng nhập
+                                </h6>
+                                <p class="card-text mb-2">
+                                    Bạn đã đăng nhập với tài khoản: <strong>@User.Identity.Name</strong>
+                                </p>
+                                <small class="text-muted">
+                                    Nếu bạn cho rằng đây là lỗi, vui lòng liên hệ quản trị viên
+                                </small>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="card border-0 bg-light">
+                            <div class="card-body">
+                                <h6 class="card-title">
+                                    <i class="bi bi-person-x text-warning me-2"></i>
+                                    Chưa đăng nhập
+                                </h6>
+                                <p class="card-text mb-2">
+                                    Bạn chưa đăng nhập. Vui lòng đăng nhập để truy cập trang này.
+                                </p>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="error-actions mb-5">
+                    <div class="d-flex flex-column flex-md-row gap-3 justify-content-center">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <a href="@Url.Action("Index", "Home")" class="btn btn-primary btn-lg px-4">
+                                <i class="bi bi-house-door me-2"></i>Về trang chủ
+                            </a>
+                            <button onclick="history.back()" class="btn btn-outline-secondary btn-lg px-4">
+                                <i class="bi bi-arrow-left me-2"></i>Quay lại
+                            </button>
+                            <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home")" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-outline-warning btn-lg px-4">
+                                    <i class="bi bi-box-arrow-right me-2"></i>Đăng xuất
+                                </button>
+                            </form>
+                        }
+                        else
+                        {
+                            <a href="/Identity/Account/Login?returnUrl=@Uri.EscapeDataString(Context.Request.Path + Context.Request.QueryString)" class="btn btn-primary btn-lg px-4">
+                                <i class="bi bi-box-arrow-in-right me-2"></i>Đăng nhập
+                            </a>
+                            <a href="@Url.Action("Index", "Home")" class="btn btn-outline-secondary btn-lg px-4">
+                                <i class="bi bi-house-door me-2"></i>Về trang chủ
+                            </a>
+                            <a href="/Identity/Account/Register" class="btn btn-outline-info btn-lg px-4">
+                                <i class="bi bi-person-plus me-2"></i>Đăng ký
+                            </a>
+                        }
+                    </div>
+                </div>
+
+                <!-- Contact Support -->
+                <div class="contact-support">
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                            <div class="card border-primary">
+                                <div class="card-header bg-primary text-white text-center">
+                                    <h6 class="mb-0">
+                                        <i class="bi bi-headset me-2"></i>Cần hỗ trợ?
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-text text-center mb-3">
+                                        Nếu bạn cho rằng đây là lỗi hoặc cần được cấp quyền truy cập
+                                    </p>
+                                    <div class="d-flex flex-column flex-md-row gap-2 justify-content-center">
+                                        <a href="mailto:admin@klms.edu.vn" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-envelope me-1"></i>Email hỗ trợ
+                                        </a>
+                                        <a href="tel:0123456789" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-telephone me-1"></i>Hotline: 0123 456 789
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Available Pages -->
+                <div class="available-pages mt-5">
+                    <h6 class="text-muted mb-3">Các trang bạn có thể truy cập:</h6>
+                    <div class="d-flex flex-wrap justify-content-center gap-2">
+                        <a href="@Url.Action("Index", "Home")" class="btn btn-sm btn-outline-success">
+                            <i class="bi bi-house-door me-1"></i>Trang chủ
+                        </a>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <a href="@Url.Action("Index", "Class")" class="btn btn-sm btn-outline-success">
+                                <i class="bi bi-book me-1"></i>Lớp học của tôi
+                            </a>
+                            <a href="/Identity/Account/Manage" class="btn btn-sm btn-outline-success">
+                                <i class="bi bi-person-gear me-1"></i>Hồ sơ cá nhân
+                            </a>
+                        }
+                        else
+                        {
+                            <a href="/Identity/Account/Login" class="btn btn-sm btn-outline-success">
+                                <i class="bi bi-box-arrow-in-right me-1"></i>Đăng nhập
+                            </a>
+                            <a href="/Identity/Account/Register" class="btn btn-sm btn-outline-success">
+                                <i class="bi bi-person-plus me-1"></i>Đăng ký
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Add animation on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const elements = document.querySelectorAll('.error-number, .error-icon, .error-message, .permission-info, .user-status, .error-actions');
+            elements.forEach((el, index) => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    el.style.transition = 'all 0.6s ease';
+                    el.style.opacity = '1';
+                    el.style.transform = 'translateY(0)';
+                }, index * 150);
+            });
+        });
+
+        // Auto-focus on login button if not authenticated
+        @if (!User.Identity.IsAuthenticated)
+        {
+            <text>
+                setTimeout(() => {
+                    const loginBtn = document.querySelector('a[href*="Login"]');
+                    if (loginBtn) {
+                        loginBtn.focus();
+                    }
+                }, 1000);
+            </text>
+        }
+    </script>
+}
