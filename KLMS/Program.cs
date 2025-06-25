@@ -56,6 +56,9 @@ else
     app.UseHsts();
 }
 
+// Xu ly cac status code error (404, 403, etc.)
+app.UseStatusCodePagesWithRedirects("/Home/ErrorStatus/{0}");
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
@@ -64,8 +67,6 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Xu ly cac status code error (404, 403, etc.)
-app.UseStatusCodePagesWithReExecute("/Home/ErrorStatus/{0}");
 
 app.MapControllerRoute(
     name: "admin",

@@ -42,6 +42,7 @@ namespace KLMS.Controllers
         }
 
         // Action tong quat cho cac status code khac
+        [Route("Home/ErrorStatus/{statusCode:int}")]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult ErrorStatus(int statusCode)
         {
