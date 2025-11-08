@@ -36,6 +36,12 @@
                             </a>
                         </li>
 
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="MockTest" asp-action="Index">
+                                <i class="bi bi-laptop me-1"></i>Thi thử trên máy
+                            </a>
+                        </li>
+
                         @if (User.IsInRole("Admin"))
                         {
                             <li class="nav-item dropdown">
