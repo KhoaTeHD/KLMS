@@ -793,7 +793,7 @@
             if (fileExt === 'pdf') {
                 return `
                                     <div class="ratio ratio-16x9" style="height: 600px;">
-                                        <iframe src="${lecture.filePath}" allowfullscreen></iframe>
+                                                <iframe src="${lecture.filePath}#toolbar=0" allowfullscreen></iframe>
                                     </div>
                                 `;
             } else if (fileExt === 'ppt' || fileExt === 'pptx') {

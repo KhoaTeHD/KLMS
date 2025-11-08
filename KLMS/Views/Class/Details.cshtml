@@ -1,31 +1,522 @@
 ﻿@model KLMS.Models.Class
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Chi tiết lớp học";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Details</h1>
+<div class="container mt-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="mb-1">
+                <i class="bi bi-info-circle me-2"></i>@ViewData["Title"]
+            </h1>
+            <p class="text-muted mb-0">Thông tin chi tiết về lớp học: <strong>@Model.ClassName</strong></p>
+        </div>
+        <div class="d-flex gap-2">
+            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#quickInfoModal">
+                <i class="bi bi-lightning me-2"></i>Thông tin nhanh
+            </button>
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+                <i class="bi bi-pencil-square me-2"></i>Chỉnh sửa
+            </a>
+            <a asp-action="Index" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Quay lại
+            </a>
+        </div>
+    </div>
 
-<div>
-    <h4>Class</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ClassName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ClassName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Teacher)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Teacher.Id)
-        </dd>
-    </dl>
+    <div class="row">
+        <!-- Main Content -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-journal-text me-2"></i>Thông tin cơ bản
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <dl class="row">
+                                <dt class="col-sm-4">Tên lớp:</dt>
+                                <dd class="col-sm-8">@Model.ClassName</dd>
+
+                                <dt class="col-sm-4">Giáo viên:</dt>
+                                <dd class="col-sm-8">
+                                    @if (Model.Teacher != null)
+                                    {
+                                        <span class="badge bg-primary">@Model.Teacher.FullName</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Chưa phân công</span>
+                                    }
+                                </dd>
+
+                                <dt class="col-sm-4">Học sinh:</dt>
+                                <dd class="col-sm-8">
+                                    <span class="badge bg-success">@(Model.Students?.Count ?? 0) học sinh</span>
+                                </dd>
+                            </dl>
+                        </div>
+                        <div class="col-md-6">
+                            <dl class="row">
+                                <dt class="col-sm-4">Ngày tạo:</dt>
+                                <dd class="col-sm-8">@Model.CreatedDate.ToString("dd/MM/yyyy")</dd>
+
+                                <dt class="col-sm-4">Cập nhật:</dt>
+                                <dd class="col-sm-8">@Model.LastModified.ToString("dd/MM/yyyy HH:mm")</dd>
+
+                                <dt class="col-sm-4">Bài giảng:</dt>
+                                <dd class="col-sm-8">
+                                    <span class="badge bg-info">@(Model.Lectures?.Count ?? 0) bài</span>
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.Description))
+                    {
+                        <hr>
+                        <h6><i class="bi bi-chat-text me-2"></i>Mô tả lớp học</h6>
+                        <p class="text-muted">@Model.Description</p>
+                    }
+                </div>
+            </div>
+
+            <!-- Students List -->
+            @if (Model.Students != null && Model.Students.Any())
+            {
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0">
+                            <i class="bi bi-people me-2"></i>Danh sách học sinh (@Model.Students.Count)
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>STT</th>
+                                        <th>Họ và tên</th>
+                                        <th>Email</th>
+                                        <th>Địa chỉ</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        int index = 1;
+                                    }
+                                    @foreach (var student in Model.Students)
+                                    {
+                                        <tr>
+                                            <td>@(index++)</td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="avatar-sm me-2">
+                                                        @student.FullName?.Substring(0, 1).ToUpper()
+                                                    </div>
+                                                    @student.FullName
+                                                </div>
+                                            </td>
+                                            <td>@student.Email</td>
+                                            <td>@(student.Address ?? "N/A")</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <!-- Lectures List -->
+            @if (Model.Lectures != null && Model.Lectures.Any())
+            {
+                <div class="card shadow-sm">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">
+                            <i class="bi bi-journal-bookmark me-2"></i>Danh sách bài giảng (@Model.Lectures.Count)
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            @foreach (var lecture in Model.Lectures)
+                            {
+                                <div class="col-md-6 mb-3">
+                                    <div class="card border-0 bg-light">
+                                        <div class="card-body">
+                                            <h6 class="card-title">
+                                                <i class="bi bi-file-earmark-text me-2"></i>@lecture.Title
+                                            </h6>
+                                            @if (!string.IsNullOrEmpty(lecture.Description))
+                                            {
+                                                <p class="card-text small text-muted">@lecture.Description</p>
+                                            }
+                                            <small class="text-muted">
+                                                <i class="bi bi-calendar3"></i> @lecture.CreatedDate.ToString("dd/MM/yyyy")
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Quick Stats -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0">
+                        <i class="bi bi-graph-up me-2"></i>Thống kê nhanh
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-6 mb-3">
+                            <div class="stat-item">
+                                <div class="stat-number text-success">@(Model.Students?.Count ?? 0)</div>
+                                <div class="stat-label">Học sinh</div>
+                            </div>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <div class="stat-item">
+                                <div class="stat-number text-info">@(Model.Lectures?.Count ?? 0)</div>
+                                <div class="stat-label">Bài giảng</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="stat-item">
+                                <div class="stat-number text-warning">@((DateTime.Now - Model.CreatedDate.ToDateTime(TimeOnly.MinValue)).Days)</div>
+                                <div class="stat-label">Ngày hoạt động</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="stat-item">
+                                <div class="stat-number text-primary">100%</div>
+                                <div class="stat-label">Hoạt động</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h6 class="mb-0">
+                        <i class="bi bi-lightning me-2"></i>Thao tác nhanh
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a asp-action="ClassView" asp-route-id="@Model.Id" class="btn btn-outline-primary">
+                            <i class="bi bi-eye me-2"></i>Xem lớp học
+                        </a>
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-warning">
+                            <i class="bi bi-pencil-square me-2"></i>Chỉnh sửa
+                        </a>
+                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                            <i class="bi bi-trash me-2"></i>Xóa lớp học
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Teacher Info -->
+            @if (Model.Teacher != null)
+            {
+                <div class="card shadow-sm">
+                    <div class="card-header bg-warning text-dark">
+                        <h6 class="mb-0">
+                            <i class="bi bi-person-workspace me-2"></i>Giáo viên phụ trách
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="text-center">
+                            <div class="avatar-lg bg-warning bg-opacity-10 text-warning mx-auto mb-3">
+                                @Model.Teacher.FullName?.Substring(0, 1).ToUpper()
+                            </div>
+                            <h6>@Model.Teacher.FullName</h6>
+                            <p class="text-muted mb-2">@Model.Teacher.Email</p>
+                            @if (!string.IsNullOrEmpty(Model.Teacher.PhoneNumber))
+                            {
+                                <p class="text-muted small">
+                                    <i class="bi bi-telephone"></i> @Model.Teacher.PhoneNumber
+                                </p>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+
+<!-- Quick Info Modal -->
+<div class="modal fade" id="quickInfoModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">
+                    <i class="bi bi-lightning me-2"></i>Thông tin nhanh - @Model.ClassName
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <!-- Basic Info -->
+                    <div class="col-md-6">
+                        <div class="info-section mb-4">
+                            <h6 class="text-primary mb-3">
+                                <i class="bi bi-info-circle me-2"></i>Thông tin cơ bản
+                            </h6>
+                            <div class="info-item mb-2">
+                                <strong>Tên lớp:</strong> @Model.ClassName
+                            </div>
+                            <div class="info-item mb-2">
+                                <strong>Giáo viên:</strong> @(Model.Teacher?.FullName ?? "Chưa phân công")
+                            </div>
+                            <div class="info-item mb-2">
+                                <strong>Ngày tạo:</strong> @Model.CreatedDate.ToString("dd/MM/yyyy")
+                            </div>
+                            <div class="info-item">
+                                <strong>Cập nhật cuối:</strong> @Model.LastModified.ToString("dd/MM/yyyy HH:mm")
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Statistics -->
+                    <div class="col-md-6">
+                        <div class="info-section mb-4">
+                            <h6 class="text-success mb-3">
+                                <i class="bi bi-graph-up me-2"></i>Thống kê
+                            </h6>
+                            <div class="row text-center">
+                                <div class="col-6">
+                                    <div class="stat-box p-3 bg-success bg-opacity-10 rounded">
+                                        <div class="stat-number text-success h4">@(Model.Students?.Count ?? 0)</div>
+                                        <div class="stat-label small">Học sinh</div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="stat-box p-3 bg-info bg-opacity-10 rounded">
+                                        <div class="stat-number text-info h4">@(Model.Lectures?.Count ?? 0)</div>
+                                        <div class="stat-label small">Bài giảng</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                @if (!string.IsNullOrEmpty(Model.Description))
+                {
+                    <div class="info-section">
+                        <h6 class="text-warning mb-3">
+                            <i class="bi bi-chat-text me-2"></i>Mô tả
+                        </h6>
+                        <div class="p-3 bg-light rounded">
+                            @Model.Description
+                        </div>
+                    </div>
+                }
+
+                <!-- Recent Activity -->
+                <div class="info-section mt-4">
+                    <h6 class="text-info mb-3">
+                        <i class="bi bi-clock-history me-2"></i>Hoạt động gần đây
+                    </h6>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-marker bg-success"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-title">Lớp học được tạo</div>
+                                <div class="timeline-time">@Model.CreatedDate.ToString("dd/MM/yyyy")</div>
+                            </div>
+                        </div>
+                        @if (Model.LastModified > Model.CreatedDate.ToDateTime(TimeOnly.MinValue))
+                        {
+                            <div class="timeline-item">
+                                <div class="timeline-marker bg-warning"></div>
+                                <div class="timeline-content">
+                                    <div class="timeline-title">Thông tin được cập nhật</div>
+                                    <div class="timeline-time">@Model.LastModified.ToString("dd/MM/yyyy HH:mm")</div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+                    <i class="bi bi-pencil-square me-2"></i>Chỉnh sửa
+                </a>
+                <a asp-action="ClassView" asp-route-id="@Model.Id" class="btn btn-primary">
+                    <i class="bi bi-eye me-2"></i>Xem lớp học
+                </a>
+            </div>
+        </div>
+    </div>
 </div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">
+                    <i class="bi bi-exclamation-triangle me-2"></i>Xác nhận xóa lớp học
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-danger">
+                    <h6 class="alert-heading">
+                        <i class="bi bi-warning me-2"></i>Cảnh báo!
+                    </h6>
+                    <p class="mb-0">
+                        Bạn đang chuẩn bị xóa lớp học <strong>"@Model.ClassName"</strong>.
+                        Hành động này không thể hoàn tác!
+                    </p>
+                </div>
+
+                <ul class="list-group list-group-flush mb-3">
+                    <li class="list-group-item d-flex align-items-center">
+                        <i class="bi bi-journal-x text-danger me-2"></i>
+                        Tất cả bài giảng (@(Model.Lectures?.Count ?? 0) bài)
+                    </li>
+                    <li class="list-group-item d-flex align-items-center">
+                        <i class="bi bi-people text-danger me-2"></i>
+                        Danh sách học sinh (@(Model.Students?.Count ?? 0) học sinh)
+                    </li>
+                    <li class="list-group-item d-flex align-items-center">
+                        <i class="bi bi-file-earmark-x text-danger me-2"></i>
+                        Tất cả tệp tin đã tải lên
+                    </li>
+                </ul>
+
+                <div class="mb-3">
+                    <label for="confirmText" class="form-label">
+                        <strong>Để xác nhận, nhập tên lớp học:</strong>
+                    </label>
+                    <input type="text" class="form-control" id="confirmText"
+                           placeholder="@Model.ClassName" autocomplete="off">
+                    <div class="form-text text-danger">
+                        Nhập chính xác: <strong>@Model.ClassName</strong>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <form asp-action="Delete" asp-route-id="@Model.Id" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-danger" id="confirmDeleteBtn" disabled>
+                        <i class="bi bi-trash3 me-2"></i>Xóa lớp học
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Delete confirmation
+            document.getElementById('confirmText').addEventListener('input', function () {
+                const expectedText = '@Model.ClassName';
+                const confirmBtn = document.getElementById('confirmDeleteBtn');
+                confirmBtn.disabled = this.value !== expectedText;
+            });
+        });
+    </script>
+}
+
+@section Styles {
+    <style>
+        .avatar-sm {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .avatar-lg {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.875rem;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+
+            .timeline::before {
+                content: '';
+                position: absolute;
+                left: 15px;
+                top: 0;
+                bottom: 0;
+                width: 2px;
+                background: #dee2e6;
+            }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        .timeline-marker {
+            position: absolute;
+            left: -22px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .timeline-title {
+            font-weight: 500;
+        }
+
+        .timeline-time {
+            font-size: 0.875rem;
+            color: #6c757d;
+        }
+    </style>
+}

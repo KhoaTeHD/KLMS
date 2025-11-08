@@ -34,7 +34,6 @@ namespace KLMS.Controllers
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             IQueryable<Class> classesQuery = _context.Classes.Include(c => c.Teacher);
 
-            //var applicationDbContext = _context.Classes.Include(c => c.Teacher);
 
             // Admin: Hiển thị tất cả lớp học
             if (User.IsInRole("Admin"))
@@ -164,7 +163,7 @@ namespace KLMS.Controllers
             }
 
             var teachers = await _userManager.GetUsersInRoleAsync("Teacher");
-            ViewData["TeacherId"] = new SelectList(teachers, "Id", "Id", @class.TeacherId);
+            ViewData["TeacherId"] = new SelectList(teachers, "Id", "FullName", @class.TeacherId);
             return View(@class);
         }
 

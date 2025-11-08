@@ -1,40 +1,335 @@
 ﻿@model KLMS.Models.Class
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Chỉnh sửa lớp học";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Edit</h1>
+<div class="container mt-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="mb-1">
+                <i class="bi bi-pencil-square me-2"></i>@ViewData["Title"]
+            </h1>
+            <p class="text-muted mb-0">Cập nhật thông tin lớp học: <strong>@Model.ClassName</strong></p>
+        </div>
+        <div class="d-flex gap-2">
+            <button type="button" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#previewModal">
+                <i class="bi bi-eye me-2"></i>Xem trước
+            </button>
+            <a asp-action="Index" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Quay lại
+            </a>
+        </div>
+    </div>
 
-<h4>Class</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="ClassName" class="control-label"></label>
-                <input asp-for="ClassName" class="form-control" />
-                <span asp-validation-for="ClassName" class="text-danger"></span>
+    <div class="row">
+        <!-- Main Form -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">
+                        <i class="bi bi-form me-2"></i>Thông tin lớp học
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Edit" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+                        <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="CreatedDate" />
+                        <input type="hidden" asp-for="LastModified" />
+
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="mb-3">
+                                    <label asp-for="ClassName" class="form-label">
+                                        <i class="bi bi-journal-text me-1"></i>Tên lớp học *
+                                    </label>
+                                    <input asp-for="ClassName" class="form-control" placeholder="Nhập tên lớp học" />
+                                    <span asp-validation-for="ClassName" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label asp-for="TeacherId" class="form-label">
+                                        <i class="bi bi-person-workspace me-1"></i>Giáo viên phụ trách
+                                    </label>
+                                    <select asp-for="TeacherId" class="form-select" asp-items="ViewBag.TeacherId">
+                                        <option value="">-- Chọn giáo viên --</option>
+                                    </select>
+                                    <span asp-validation-for="TeacherId" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Description" class="form-label">
+                                <i class="bi bi-chat-text me-1"></i>Mô tả lớp học
+                            </label>
+                            <textarea asp-for="Description" class="form-control" rows="4"
+                                      placeholder="Nhập mô tả chi tiết về lớp học..."></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                    <i class="bi bi-trash me-2"></i>Xóa lớp học
+                                </button>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <a asp-action="Index" class="btn btn-secondary">
+                                    <i class="bi bi-x-circle me-2"></i>Hủy
+                                </a>
+                                <button type="submit" class="btn btn-warning">
+                                    <i class="bi bi-check-circle me-2"></i>Cập nhật
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="TeacherId" class="control-label"></label>
-                <select asp-for="TeacherId" class="form-control" asp-items="ViewBag.TeacherId"></select>
-                <span asp-validation-for="TeacherId" class="text-danger"></span>
+        </div>
+
+        <!-- Sidebar Info -->
+        <div class="col-lg-4">
+            <!-- Current Class Info -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0">
+                        <i class="bi bi-info-circle me-2"></i>Thông tin hiện tại
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <div class="class-icon bg-warning bg-opacity-10 text-warning mx-auto mb-2">
+                            <i class="bi bi-journal-text"></i>
+                        </div>
+                        <h6 class="fw-bold">@Model.ClassName</h6>
+                    </div>
+
+                    <div class="mb-2">
+                        <i class="bi bi-person-workspace text-primary me-2"></i>
+                        <strong>Giáo viên:</strong> @(Model.Teacher?.FullName ?? "Chưa phân công")
+                    </div>
+                    <div class="mb-2">
+                        <i class="bi bi-people text-success me-2"></i>
+                        <strong>Học sinh:</strong> @(Model.Students?.Count ?? 0) học sinh
+                    </div>
+                    <div class="mb-2">
+                        <i class="bi bi-journal text-info me-2"></i>
+                        <strong>Bài giảng:</strong> @(Model.Lectures?.Count ?? 0) bài
+                    </div>
+                    <div class="mb-2">
+                        <i class="bi bi-calendar3 text-warning me-2"></i>
+                        <strong>Tạo:</strong> @Model.CreatedDate.ToString("dd/MM/yyyy")
+                    </div>
+                    <div class="mb-2">
+                        <i class="bi bi-clock-history text-muted me-2"></i>
+                        <strong>Cập nhật:</strong> @Model.LastModified.ToString("dd/MM/yyyy HH:mm")
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+
+            <!-- Quick Actions -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h6 class="mb-0">
+                        <i class="bi bi-lightning me-2"></i>Thao tác nhanh
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a asp-action="ClassView" asp-route-id="@Model.Id" asp-route-tab="students" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-person-plus me-2"></i>Quản lý học sinh
+                        </a>
+                        <a asp-action="ClassView" asp-route-id="@Model.Id" asp-route-tab="lectures" class="btn btn-outline-success btn-sm">
+                            <i class="bi bi-file-earmark-plus me-2"></i>Quản lý bài giảng
+                        </a>
+                        <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-info btn-sm">
+                            <i class="bi bi-eye me-2"></i>Xem chi tiết
+                        </a>
+                    </div>
+                </div>
             </div>
-        </form>
+
+            <!-- Tips -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning text-dark">
+                    <h6 class="mb-0">
+                        <i class="bi bi-lightbulb me-2"></i>Gợi ý
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <ul class="mb-0 small">
+                        <li class="mb-2">Tên lớp nên ngắn gọn, dễ nhớ</li>
+                        <li class="mb-2">Mô tả chi tiết giúp học sinh hiểu rõ hơn</li>
+                        <li class="mb-2">Có thể thay đổi giáo viên phụ trách</li>
+                        <li>Kiểm tra thông tin trước khi lưu</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
+<!-- Preview Modal -->
+<div class="modal fade" id="previewModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">
+                    <i class="bi bi-eye me-2"></i>Xem trước lớp học
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-4">
+                    <div class="class-icon bg-warning bg-opacity-10 text-warning mx-auto mb-3">
+                        <i class="bi bi-journal-text"></i>
+                    </div>
+                    <h4 id="previewClassName">@Model.ClassName</h4>
+                    <p class="text-muted" id="previewDescription">@Model.Description</p>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded mb-3">
+                            <h6><i class="bi bi-person-workspace me-2"></i>Giáo viên</h6>
+                            <p class="mb-0" id="previewTeacher">@(Model.Teacher?.FullName ?? "Chưa phân công")</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded mb-3">
+                            <h6><i class="bi bi-people me-2"></i>Học sinh</h6>
+                            <p class="mb-0">@(Model.Students?.Count ?? 0) học sinh</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded mb-3">
+                            <h6><i class="bi bi-calendar3 me-2"></i>Ngày tạo</h6>
+                            <p class="mb-0">@Model.CreatedDate.ToString("dd/MM/yyyy")</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded mb-3">
+                            <h6><i class="bi bi-clock-history me-2"></i>Cập nhật cuối</h6>
+                            <p class="mb-0">@Model.LastModified.ToString("dd/MM/yyyy HH:mm")</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">
+                    <i class="bi bi-exclamation-triangle me-2"></i>Xác nhận xóa lớp học
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-danger">
+                    <h6 class="alert-heading">
+                        <i class="bi bi-warning me-2"></i>Cảnh báo!
+                    </h6>
+                    <p class="mb-0">
+                        Bạn đang chuẩn bị xóa lớp học <strong>"@Model.ClassName"</strong>.
+                        Hành động này sẽ xóa vĩnh viễn:
+                    </p>
+                </div>
+
+                <ul class="list-group list-group-flush mb-3">
+                    <li class="list-group-item d-flex align-items-center">
+                        <i class="bi bi-journal-x text-danger me-2"></i>
+                        Tất cả bài giảng (@(Model.Lectures?.Count ?? 0) bài)
+                    </li>
+                    <li class="list-group-item d-flex align-items-center">
+                        <i class="bi bi-people text-danger me-2"></i>
+                        Danh sách học sinh (@(Model.Students?.Count ?? 0) học sinh)
+                    </li>
+                    <li class="list-group-item d-flex align-items-center">
+                        <i class="bi bi-file-earmark-x text-danger me-2"></i>
+                        Tất cả tệp tin đã tải lên
+                    </li>
+                </ul>
+
+                <div class="mb-3">
+                    <label for="confirmText" class="form-label">
+                        <strong>Để xác nhận, nhập tên lớp học:</strong>
+                    </label>
+                    <input type="text" class="form-control" id="confirmText"
+                           placeholder="@Model.ClassName" autocomplete="off">
+                    <div class="form-text text-danger">
+                        Nhập chính xác: <strong>@Model.ClassName</strong>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <form asp-action="Delete" asp-route-id="@Model.Id" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-danger" id="confirmDeleteBtn" disabled>
+                        <i class="bi bi-trash3 me-2"></i>Xóa lớp học
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        // Live preview update
+        document.addEventListener('DOMContentLoaded', function() {
+            const classNameInput = document.querySelector('input[name="ClassName"]');
+            const descriptionInput = document.querySelector('textarea[name="Description"]');
+            const teacherSelect = document.querySelector('select[name="TeacherId"]');
+
+            function updatePreview() {
+                document.getElementById('previewClassName').textContent = classNameInput.value || '@Model.ClassName';
+                document.getElementById('previewDescription').textContent = descriptionInput.value || '@Model.Description';
+
+                const selectedTeacher = teacherSelect.options[teacherSelect.selectedIndex];
+                document.getElementById('previewTeacher').textContent = selectedTeacher.text;
+            }
+
+            classNameInput?.addEventListener('input', updatePreview);
+            descriptionInput?.addEventListener('input', updatePreview);
+            teacherSelect?.addEventListener('change', updatePreview);
+
+            // Delete confirmation
+            document.getElementById('confirmText').addEventListener('input', function() {
+                const expectedText = '@Model.ClassName';
+                const confirmBtn = document.getElementById('confirmDeleteBtn');
+                confirmBtn.disabled = this.value !== expectedText;
+            });
+        });
+    </script>
+}
+
+@section Styles {
+    <style>
+        .class-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+    </style>
 }

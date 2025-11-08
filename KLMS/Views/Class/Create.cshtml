@@ -1,43 +1,328 @@
 ﻿@model KLMS.Models.Class
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Tạo lớp học mới";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Create</h1>
+<div class="container mt-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="mb-1">
+                <i class="bi bi-plus-circle me-2"></i>@ViewData["Title"]
+            </h1>
+            <p class="text-muted mb-0">Thiết lập lớp học cho học sinh của bạn</p>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2"></i>Quay lại danh sách
+        </a>
+    </div>
 
-<h4>Class</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="ClassName" class="control-label"></label>
-                <input asp-for="ClassName" class="form-control" />
-                <span asp-validation-for="ClassName" class="text-danger"></span>
+    <div class="row">
+        <!-- Main Form -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-form me-2"></i>Thông tin lớp học
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="mb-3">
+                                    <label asp-for="ClassName" class="form-label">
+                                        <i class="bi bi-journal-text me-1"></i>Tên lớp học *
+                                    </label>
+                                    <input asp-for="ClassName" class="form-control" placeholder="VD: Toán 12A1, Lý 11B2..." />
+                                    <span asp-validation-for="ClassName" class="text-danger"></span>
+                                    <div class="form-text">Tên lớp nên ngắn gọn và dễ nhớ</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label asp-for="TeacherId" class="form-label">
+                                        <i class="bi bi-person-workspace me-1"></i>Giáo viên phụ trách
+                                    </label>
+                                    <select asp-for="TeacherId" class="form-select" asp-items="ViewBag.TeacherId">
+                                        <option value="">-- Chọn giáo viên --</option>
+                                    </select>
+                                    <span asp-validation-for="TeacherId" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Description" class="form-label">
+                                <i class="bi bi-chat-text me-1"></i>Mô tả lớp học
+                            </label>
+                            <textarea asp-for="Description" class="form-control" rows="4"
+                                      placeholder="Mô tả ngắn gọn về lớp học, mục tiêu và nội dung..."></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-flex justify-content-end gap-2">
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="bi bi-x-circle me-2"></i>Hủy
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-check-circle me-2"></i>Tạo lớp học
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Live Preview -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0">
+                        <i class="bi bi-eye me-2"></i>Xem trước
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="text-center">
+                        <div class="class-icon bg-success bg-opacity-10 text-success mx-auto mb-3">
+                            <i class="bi bi-journal-text"></i>
+                        </div>
+                        <h6 id="previewName">Tên lớp học</h6>
+                        <p class="small text-muted mb-2" id="previewTeacher">Chọn giáo viên</p>
+                        <p class="small text-muted" id="previewDescription">Mô tả lớp học...</p>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="TeacherId" class="control-label"></label>
-                <select asp-for="TeacherId" class ="form-control" asp-items="ViewBag.TeacherId"></select>
+
+            <!-- Template Suggestions -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h6 class="mb-0">
+                        <i class="bi bi-lightbulb me-2"></i>Mẫu lớp học
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <p class="small text-muted mb-3">Chọn mẫu có sẵn để tạo nhanh</p>
+
+                    <div class="template-card card mb-2" onclick="useTemplate('math')">
+                        <div class="card-body p-2">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-primary bg-opacity-10 text-primary me-2 p-2 rounded">
+                                    <i class="bi bi-calculator"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0">Toán học</h6>
+                                    <small class="text-muted">Toán 12A1 - Ôn thi THPT</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="template-card card mb-2" onclick="useTemplate('physics')">
+                        <div class="card-body p-2">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-info bg-opacity-10 text-info me-2 p-2 rounded">
+                                    <i class="bi bi-lightning"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0">Vật lý</h6>
+                                    <small class="text-muted">Vật lý 11B2 - Thí nghiệm</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="template-card card mb-2" onclick="useTemplate('english')">
+                        <div class="card-body p-2">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-success bg-opacity-10 text-success me-2 p-2 rounded">
+                                    <i class="bi bi-translate"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0">Tiếng Anh</h6>
+                                    <small class="text-muted">English 10A3 - Giao tiếp</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="template-card card mb-2" onclick="useTemplate('chemistry')">
+                        <div class="card-body p-2">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-warning bg-opacity-10 text-warning me-2 p-2 rounded">
+                                    <i class="bi bi-flask"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0">Hóa học</h6>
+                                    <small class="text-muted">Hóa 12C1 - Hữu cơ</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+
+            <!-- Tips -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning text-dark">
+                    <h6 class="mb-0">
+                        <i class="bi bi-info-circle me-2"></i>Mẹo hữu ích
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <ul class="mb-0 small">
+                        <li class="mb-2">Tên lớp nên bao gồm môn học và khối</li>
+                        <li class="mb-2">Mô tả rõ ràng giúp học sinh hiểu mục tiêu</li>
+                        <li class="mb-2">Chọn giáo viên phù hợp với môn học</li>
+                        <li class="mb-2">Có thể chỉnh sửa mọi thông tin sau khi tạo</li>
+                        <li>Thêm học sinh và bài giảng sau khi tạo lớp</li>
+                    </ul>
+                </div>
             </div>
-        </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const classNameInput = document.querySelector('input[name="ClassName"]');
+            const descriptionInput = document.querySelector('textarea[name="Description"]');
+            const teacherSelect = document.querySelector('select[name="TeacherId"]');
+
+            function updateLivePreview() {
+                const className = classNameInput.value || 'Tên lớp học';
+                const description = descriptionInput.value || 'Mô tả lớp học...';
+                const teacherText = teacherSelect.selectedIndex > 0 ?
+                    teacherSelect.options[teacherSelect.selectedIndex].text : 'Chọn giáo viên';
+
+                document.getElementById('previewName').textContent = className;
+                document.getElementById('previewDescription').textContent = description;
+                document.getElementById('previewTeacher').textContent = teacherText;
+            }
+
+            classNameInput.addEventListener('input', updateLivePreview);
+            descriptionInput.addEventListener('input', updateLivePreview);
+            teacherSelect.addEventListener('change', updateLivePreview);
+
+            // Initialize preview
+            updateLivePreview();
+        });
+
+        function useTemplate(type) {
+            // Remove previous selection
+            document.querySelectorAll('.template-card').forEach(card => {
+                card.classList.remove('border-primary', 'bg-primary', 'bg-opacity-10');
+            });
+
+            // Add selection to clicked template
+            event.currentTarget.classList.add('border-primary', 'bg-primary', 'bg-opacity-10');
+
+            const templates = {
+                math: {
+                    name: 'Toán 12A1',
+                    description: 'Lớp học Toán 12 nâng cao, tập trung ôn thi THPT Quốc gia với các chuyên đề: Đại số, Hình học, Giải tích.'
+                },
+                physics: {
+                    name: 'Vật lý 11B2',
+                    description: 'Lớp học Vật lý 11, chương trình chuẩn với thí nghiệm thực hành. Tập trung vào cơ học và điện học.'
+                },
+                english: {
+                    name: 'English 10A3',
+                    description: 'Lớp học Tiếng Anh giao tiếp và ngữ pháp cơ bản. Phát triển 4 kỹ năng: Nghe, Nói, Đọc, Viết.'
+                },
+                chemistry: {
+                    name: 'Hóa 12C1',
+                    description: 'Lớp học Hóa học 12, chuyên sâu về hóa hữu cơ và ôn tập tổng hợp kiến thức 3 năm THPT.'
+                }
+            };
+
+            const template = templates[type];
+            if (template) {
+                document.querySelector('input[name="ClassName"]').value = template.name;
+                document.querySelector('textarea[name="Description"]').value = template.description;
+
+                // Trigger preview update
+                updateLivePreview();
+
+                // Show success message
+                showToast(`Đã áp dụng mẫu: ${template.name}`, 'success');
+            }
+        }
+
+        function updateLivePreview() {
+            const className = document.querySelector('input[name="ClassName"]').value || 'Tên lớp học';
+            const description = document.querySelector('textarea[name="Description"]').value || 'Mô tả lớp học...';
+            const teacherSelect = document.querySelector('select[name="TeacherId"]');
+            const teacherText = teacherSelect.selectedIndex > 0 ?
+                teacherSelect.options[teacherSelect.selectedIndex].text : 'Chọn giáo viên';
+
+            document.getElementById('previewName').textContent = className;
+            document.getElementById('previewDescription').textContent = description;
+            document.getElementById('previewTeacher').textContent = teacherText;
+        }
+
+        function showToast(message, type = 'info') {
+            const toastClass = type === 'success' ? 'bg-success' : type === 'warning' ? 'bg-warning' : 'bg-info';
+            const toast = document.createElement('div');
+            toast.className = `toast align-items-center text-white ${toastClass} border-0`;
+            toast.setAttribute('role', 'alert');
+            toast.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body">${message}</div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            `;
+
+            // Create toast container if it doesn't exist
+            let toastContainer = document.querySelector('.toast-container');
+            if (!toastContainer) {
+                toastContainer = document.createElement('div');
+                toastContainer.className = 'toast-container position-fixed top-0 end-0 p-3';
+                document.body.appendChild(toastContainer);
+            }
+
+            toastContainer.appendChild(toast);
+            const bsToast = new bootstrap.Toast(toast);
+            bsToast.show();
+
+            toast.addEventListener('hidden.bs.toast', function () {
+                toast.remove();
+            });
+        }
+    </script>
+}
+
+@section Styles {
+    <style>
+        .class-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .template-card {
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid #dee2e6;
+        }
+
+        .template-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+    </style>
 }
