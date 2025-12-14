@@ -142,20 +142,26 @@ function initializeEventHandlers() {
         toggleBookmark(questionId, !isBookmarked, $(this));
     });
     
-    // Question number buttons
-    $('.btn-question-number').on('click', function () {
-        const questionNumber = $(this).data('question-number');
+    // Question number buttons - Use event delegation for better reliability
+    $(document).on('click', '.btn-question-number', function (e) {
+        e.preventDefault();
+        const questionNumber = parseInt($(this).data('question-number'));
+        //console.log('Clicked question number:', questionNumber);
         jumpToQuestion(questionNumber);
     });
     
     // Navigation buttons
-    $('#btnPrevious').on('click', function () {
+    $('#btnPrevious').on('click', function (e) {
+        e.preventDefault();
+        console.log('Previous clicked, current:', currentQuestionNumber);
         if (currentQuestionNumber > 1) {
             jumpToQuestion(currentQuestionNumber - 1);
         }
     });
     
-    $('#btnNext').on('click', function () {
+    $('#btnNext').on('click', function (e) {
+        e.preventDefault();
+        console.log('Next clicked, current:', currentQuestionNumber);
         if (currentQuestionNumber < totalQuestions) {
             jumpToQuestion(currentQuestionNumber + 1);
         }
@@ -185,6 +191,10 @@ function initializeEventHandlers() {
     $('#btnFullscreen').on('click', function () {
         toggleFullscreen();
     });
+    
+    console.log('Event handlers initialized');
+    console.log('Total questions:', totalQuestions);
+    console.log('Question buttons found:', $('.btn-question-number').length);
 }
 
 // ========================================
@@ -270,18 +280,44 @@ function initializeNavigation() {
 }
 
 function jumpToQuestion(questionNumber) {
+    //console.log('Jumping to question:', questionNumber);
     currentQuestionNumber = questionNumber;
     
     // Scroll to question in right column
     const $question = $(`#question-${questionNumber}`);
-    if ($question.length) {
-        const container = document.getElementById('questionsContainer');
-        const question = $question[0];
+    const $container = $('#questionsContainer');
+    
+    if ($question.length && $container.length) {
+        const containerElement = $container[0];
+        const questionElement = $question[0];
         
-        container.scrollTo({
-            top: question.offsetTop - container.offsetTop - 20,
-            behavior: 'smooth'
-        });
+        //console.log('Container found:', containerElement);
+        //console.log('Question element found:', questionElement);
+        
+        // Method 1: Try scrollIntoView first (most reliable)
+        try {
+            questionElement.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start',
+                inline: 'nearest'
+            });
+        } catch (e) {
+            console.log('scrollIntoView failed, trying alternative:', e);
+            
+            // Method 2: Fallback to manual scroll calculation
+            const questionOffsetTop = questionElement.offsetTop;
+            const targetScrollTop = questionOffsetTop - 20; // 20px padding from top
+            
+            // Use jQuery animate as fallback
+            $container.animate({
+                scrollTop: targetScrollTop
+            }, 300);
+        }
+    } else {
+        console.warn('Question or container not found!');
+        console.log('Question selector:', `#question-${questionNumber}`);
+        console.log('Question exists:', $question.length);
+        console.log('Container exists:', $container.length);
     }
     
     // Load content for this question
