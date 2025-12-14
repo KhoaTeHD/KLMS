@@ -1,0 +1,183 @@
+@model KLMS.ViewModels.TestHistoryViewModel
+@{
+    ViewData["Title"] = "Lịch sử thi";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mb-0"><i class="bi bi-clock-history me-2"></i>Lịch sử thi</h1>
+        <a asp-action="Index" class="btn btn-outline-primary">
+            <i class="bi bi-arrow-left me-2"></i>Quay lại
+        </a>
+    </div>
+
+    @if (!Model.Attempts.Any())
+    {
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle me-2"></i>
+            Bạn chưa có lần thi nào. Hãy bắt đầu làm bài thi!
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>STT</th>
+                        <th>Môn thi</th>
+                        <th>Lần thi</th>
+                        <th>Thời gian bắt đầu</th>
+                        <th>Thời gian kết thúc</th>
+                        <th>Trạng thái</th>
+                        <th>Điểm</th>
+                        <th>Kết quả</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ int stt = 1; }
+                    @foreach (var attempt in Model.Attempts)
+                    {
+                        <tr>
+                            <td>@stt</td>
+                            <td>
+                                <strong>@attempt.TestTitle</strong>
+                                <br>
+                                <small class="text-muted">@attempt.SubjectCode</small>
+                            </td>
+                            <td>
+                                <span class="badge bg-secondary">Lần @attempt.AttemptNumber</span>
+                            </td>
+                            <td>@attempt.StartTime.ToString("HH:mm dd/MM/yyyy")</td>
+                            <td>
+                                @if (attempt.EndTime.HasValue)
+                                {
+                                    @attempt.EndTime.Value.ToString("HH:mm dd/MM/yyyy")
+                                }
+                                else
+                                {
+                                    <span class="text-muted">-</span>
+                                }
+                            </td>
+                            <td>
+                                @switch (attempt.Status)
+                                {
+                                    case KLMS.Models.AttemptStatus.InProgress:
+                                        <span class="badge bg-warning">Đang làm</span>
+                                        break;
+                                    case KLMS.Models.AttemptStatus.Completed:
+                                        <span class="badge bg-success">Hoàn thành</span>
+                                        break;
+                                    case KLMS.Models.AttemptStatus.Expired:
+                                        <span class="badge bg-danger">Hết giờ</span>
+                                        break;
+                                    case KLMS.Models.AttemptStatus.Abandoned:
+                                        <span class="badge bg-secondary">Bỏ dở</span>
+                                        break;
+                                }
+                            </td>
+                            <td>
+                                @if (attempt.Score.HasValue)
+                                {
+                                    <strong>@attempt.Score.Value.ToString("0.0")</strong>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">-</span>
+                                }
+                            </td>
+                            <td>
+                                @if (attempt.IsPassed.HasValue)
+                                {
+                                    if (attempt.IsPassed.Value)
+                                    {
+                                        <span class="badge bg-success">Đạt</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Không đạt</span>
+                                    }
+                                }
+                                else
+                                {
+                                    <span class="text-muted">-</span>
+                                }
+                            </td>
+                            <td>
+                                @if (attempt.Status == KLMS.Models.AttemptStatus.InProgress)
+                                {
+                                    <a asp-action="TakeTest" asp-route-id="@attempt.AttemptId" 
+                                       class="btn btn-sm btn-primary">
+                                        <i class="bi bi-play-fill"></i> Tiếp tục
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a asp-action="TestResult" asp-route-id="@attempt.AttemptId" 
+                                       class="btn btn-sm btn-info text-white">
+                                        <i class="bi bi-eye-fill"></i> Xem
+                                    </a>
+                                }
+                            </td>
+                        </tr>
+                        stt++;
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Statistics -->
+        <div class="row mt-4">
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h3 class="text-primary">@Model.Attempts.Count</h3>
+                        <p class="mb-0">Tổng số lần thi</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h3 class="text-success">@Model.Attempts.Count(a => a.Status == KLMS.Models.AttemptStatus.Completed)</h3>
+                        <p class="mb-0">Hoàn thành</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h3 class="text-success">@Model.Attempts.Count(a => a.IsPassed == true)</h3>
+                        <p class="mb-0">Đạt</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        @{
+                            var avgScore = Model.Attempts.Where(a => a.Score.HasValue).Average(a => a.Score);
+                        }
+                        <h3 class="text-info">@(avgScore.HasValue ? avgScore.Value.ToString("0.0") : "0.0")</h3>
+                        <p class="mb-0">Điểm trung bình</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <style>
+        .table-hover tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    </style>
+}

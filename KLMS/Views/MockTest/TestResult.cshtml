@@ -1,0 +1,122 @@
+@model KLMS.ViewModels.TestResultViewModel
+@{
+    ViewData["Title"] = "Kết quả thi";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg border-0">
+                <div class="card-body text-center p-5">
+                    <!-- Success Icon -->
+                    <div class="mb-4">
+                        @if (Model.IsPassed)
+                        {
+                            <i class="bi bi-check-circle-fill text-success" style="font-size: 5rem;"></i>
+                        }
+                        else
+                        {
+                            <i class="bi bi-x-circle-fill text-danger" style="font-size: 5rem;"></i>
+                        }
+                    </div>
+
+                    <!-- Title -->
+                    <h3 class="mb-4">Kết quả thi</h3>
+
+                    <!-- Success Message -->
+                    <div class="alert alert-success mb-4">
+                        <i class="bi bi-check2"></i> Bạn đã nộp bài thi thành công!
+                    </div>
+
+                    <!-- Results -->
+                    <div class="result-details">
+                        <div class="row mb-3">
+                            <div class="col-6 text-end">
+                                <strong>Số câu đã trả lời:</strong>
+                            </div>
+                            <div class="col-6 text-start">
+                                <span class="text-primary fw-bold">@Model.TotalAnswered/@Model.TotalQuestions</span>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-6 text-end">
+                                <strong>Số điểm đạt được:</strong>
+                            </div>
+                            <div class="col-6 text-start">
+                                <span class="@(Model.IsPassed ? "text-success" : "text-danger") fw-bold fs-4">
+                                    @Model.Score.ToString("0.0")/@Model.TotalPoints.ToString("0.0")
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-6 text-end">
+                                <strong>Kết quả:</strong>
+                            </div>
+                            <div class="col-6 text-start">
+                                @if (Model.IsPassed)
+                                {
+                                    <span class="badge bg-success fs-6">ĐẠT</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger fs-6">KHÔNG ĐẠT</span>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-6 text-end">
+                                <strong>Thời gian làm bài:</strong>
+                            </div>
+                            <div class="col-6 text-start">
+                                @{
+                                    var duration = Model.Duration;
+                                    var minutes = (int)duration.TotalMinutes;
+                                    var seconds = duration.Seconds;
+                                }
+                                <span>@minutes phút @seconds giây</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="mt-4">
+                        <a asp-action="Index" class="btn btn-primary btn-lg px-5">
+                            <i class="bi bi-house-fill me-2"></i>Hoàn thành
+                        </a>
+                        <a asp-action="History" class="btn btn-outline-secondary btn-lg px-4 ms-2">
+                            <i class="bi bi-clock-history me-2"></i>Lịch sử thi
+                        </a>
+                    </div>
+
+                    <!-- Info -->
+                    <div class="mt-4 text-muted small">
+                        <p class="mb-1">Bài thi: @Model.TestTitle</p>
+                        <p class="mb-0">Thời gian nộp: @Model.EndTime.ToString("HH:mm:ss - dd/MM/yyyy")</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .card {
+            border-radius: 15px;
+        }
+
+        .result-details {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+        }
+
+        .btn-lg {
+            border-radius: 10px;
+        }
+    </style>
+}

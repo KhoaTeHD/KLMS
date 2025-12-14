@@ -1,0 +1,460 @@
+/* ========================================
+   MOCK TEST - CSS STYLING
+   Layout, Colors, Responsive
+   ======================================== */
+
+/* ========================================
+   VARIABLES
+   ======================================== */
+:root {
+    --header-height: 80px;
+    --subheader-height: 60px;
+    --footer-height: 60px;
+    --primary-color: #1b6ec2;
+    --success-color: #28a745;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --gray-light: #f8f9fa;
+    --gray-medium: #dee2e6;
+    --navy: #1e3a8a;
+}
+
+/* ========================================
+   BODY & LAYOUT
+   ======================================== */
+.mocktest-body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* ========================================
+   HEADER (Navy Blue)
+   ======================================== */
+.mocktest-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--header-height);
+    background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+    color: white;
+    z-index: 1000;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+}
+
+.mocktest-header .container-fluid {
+    padding: 0 1.5rem;
+}
+
+.mocktest-header h5 {
+    margin: 0;
+    font-weight: 600;
+}
+
+.connection-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+#timer {
+    font-family: 'Courier New', monospace;
+}
+
+/* ========================================
+   SUB-HEADER (White)
+   ======================================== */
+.mocktest-subheader {
+    position: fixed;
+    top: var(--header-height);
+    left: 0;
+    right: 0;
+    height: var(--subheader-height);
+    background: white;
+    border-bottom: 1px solid var(--gray-medium);
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.mocktest-subheader .container-fluid {
+    padding: 0 1.5rem;
+}
+
+/* ========================================
+   MAIN CONTENT (2 Columns)
+   ======================================== */
+.mocktest-content {
+    position: fixed;
+    top: calc(var(--header-height) + var(--subheader-height));
+    left: 0;
+    right: 0;
+    bottom: var(--footer-height);
+    background: var(--gray-light);
+    overflow: hidden;
+}
+
+.mocktest-content .row {
+    margin: 0;
+}
+
+.mocktest-content-left,
+.mocktest-content-right {
+    height: calc(100vh - var(--header-height) - var(--subheader-height) - var(--footer-height));
+    overflow-y: auto;
+    padding: 1.5rem;
+}
+
+.mocktest-content-left {
+    background: white;
+    border-right: 2px solid var(--gray-medium);
+}
+
+.mocktest-content-right {
+    background: var(--gray-light);
+}
+
+/* Content Display */
+.content-display {
+    min-height: 400px;
+    background: white;
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.content-text {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    text-align: justify;
+}
+
+.content-image img {
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.content-pdf iframe {
+    border-radius: 8px;
+}
+
+/* ========================================
+   QUESTIONS CONTAINER
+   ======================================== */
+.questions-container {
+    max-height: 100%;
+}
+
+.question-item {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+}
+
+.question-item:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    transform: translateY(-2px);
+}
+
+.question-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--primary-color);
+}
+
+.question-label {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--primary-color);
+}
+
+.btn-bookmark {
+    background: none;
+    border: none;
+    font-size: 1.3rem;
+    color: var(--gray-medium);
+    cursor: pointer;
+    transition: all 0.2s;
+    padding: 0.25rem 0.5rem;
+}
+
+.btn-bookmark:hover {
+    color: var(--warning-color);
+    transform: scale(1.1);
+}
+
+.btn-bookmark.active {
+    color: var(--warning-color);
+}
+
+.question-text {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
+
+.question-answers {
+    margin-top: 1rem;
+}
+
+.question-answers .form-check {
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    border-radius: 6px;
+    transition: background 0.2s;
+}
+
+.question-answers .form-check:hover {
+    background: var(--gray-light);
+}
+
+.question-answers .form-check-input {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-top: 0.25rem;
+}
+
+.question-answers .form-check-label {
+    font-size: 1rem;
+    cursor: pointer;
+    user-select: none;
+}
+
+/* ========================================
+   FOOTER NAVIGATION
+   ======================================== */
+.mocktest-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: var(--footer-height);
+    background: white;
+    border-top: 1px solid var(--gray-medium);
+    z-index: 998;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 -1px 3px rgba(0,0,0,0.1);
+    overflow-x: auto;
+}
+
+.question-numbers {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0 1.5rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.btn-question-number {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid var(--gray-medium);
+    background: white;
+    color: #333;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.btn-question-number:hover {
+    transform: scale(1.1);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.btn-question-number.answered {
+    background: var(--success-color);
+    border-color: var(--success-color);
+    color: white;
+}
+
+.btn-question-number.active {
+    border-color: var(--primary-color);
+    border-width: 3px;
+    box-shadow: 0 0 0 3px rgba(27, 110, 194, 0.2);
+}
+
+.btn-question-number.bookmarked {
+    border-color: var(--warning-color);
+}
+
+.btn-question-number .bookmark-icon {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    font-size: 0.8rem;
+    color: var(--warning-color);
+}
+
+/* ========================================
+   RESPONSIVE - MOBILE
+   ======================================== */
+@media (max-width: 991px) {
+    :root {
+        --header-height: 100px;
+        --subheader-height: 80px;
+    }
+
+    .mocktest-content-left,
+    .mocktest-content-right {
+        height: auto;
+        min-height: 50vh;
+    }
+}
+
+@media (max-width: 767px) {
+    :root {
+        --header-height: 120px;
+        --subheader-height: 100px;
+        --footer-height: 80px;
+    }
+
+    .mocktest-header h5 {
+        font-size: 1rem;
+    }
+
+    .mocktest-header small {
+        font-size: 0.75rem;
+    }
+
+    .mocktest-header .col-md-6 {
+        text-align: center !important;
+    }
+
+    .mocktest-subheader {
+        flex-direction: column;
+        height: auto;
+        padding: 0.5rem 0;
+    }
+
+    .mocktest-subheader .d-flex {
+        flex-direction: column;
+        width: 100%;
+        gap: 0.5rem;
+        padding: 0.5rem;
+    }
+
+    .mocktest-content-left {
+        border-right: none;
+        border-bottom: 2px solid var(--gray-medium);
+    }
+
+    .question-numbers {
+        justify-content: center;
+    }
+
+    .btn-question-number {
+        width: 36px;
+        height: 36px;
+        font-size: 0.85rem;
+    }
+
+    /* Tabs for mobile */
+    .mobile-tabs {
+        display: flex;
+        background: white;
+        border-bottom: 2px solid var(--gray-medium);
+    }
+
+    .mobile-tabs button {
+        flex: 1;
+        padding: 1rem;
+        border: none;
+        background: white;
+        font-weight: 600;
+        color: #666;
+    }
+
+    .mobile-tabs button.active {
+        color: var(--primary-color);
+        border-bottom: 3px solid var(--primary-color);
+    }
+}
+
+/* ========================================
+   MODAL
+   ======================================== */
+.modal-content {
+    border-radius: 12px;
+}
+
+.modal-header {
+    background: linear-gradient(135deg, var(--primary-color) 0%, #2563eb 100%);
+    color: white;
+    border-radius: 12px 12px 0 0;
+}
+
+.modal-header .btn-close {
+    filter: brightness(0) invert(1);
+}
+
+/* ========================================
+   UTILITIES
+   ======================================== */
+.text-white-50 {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* Scrollbar Styling */
+.mocktest-content-left::-webkit-scrollbar,
+.mocktest-content-right::-webkit-scrollbar,
+.mocktest-footer::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.mocktest-content-left::-webkit-scrollbar-track,
+.mocktest-content-right::-webkit-scrollbar-track,
+.mocktest-footer::-webkit-scrollbar-track {
+    background: var(--gray-light);
+}
+
+.mocktest-content-left::-webkit-scrollbar-thumb,
+.mocktest-content-right::-webkit-scrollbar-thumb,
+.mocktest-footer::-webkit-scrollbar-thumb {
+    background: var(--gray-medium);
+    border-radius: 4px;
+}
+
+.mocktest-content-left::-webkit-scrollbar-thumb:hover,
+.mocktest-content-right::-webkit-scrollbar-thumb:hover,
+.mocktest-footer::-webkit-scrollbar-thumb:hover {
+    background: #adb5bd;
+}
+
+/* Loading Spinner */
+.spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+    border-width: 0.15em;
+}
+
+/* ========================================
+   PRINT STYLES
+   ======================================== */
+@media print {
+    .mocktest-header,
+    .mocktest-subheader,
+    .mocktest-footer {
+        display: none;
+    }
+
+    .mocktest-content {
+        position: static;
+        height: auto;
+    }
+}

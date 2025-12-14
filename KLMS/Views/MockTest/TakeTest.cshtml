@@ -1,0 +1,195 @@
+@model KLMS.ViewModels.TakeTestViewModel
+@{
+    ViewData["Title"] = "Làm bài thi - " + Model.Test.Title;
+    Layout = null; // Fullscreen layout
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="~/css/mocktest.css" asp-append-version="true" />
+</head>
+<body class="mocktest-body">
+    <!-- Header Bar -->
+    <div class="mocktest-header">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h5 class="mb-1 text-white">@Model.StudentName</h5>
+                    <small class="text-white-50">
+                        SBD: @Model.StudentId | Môn thi: @Model.Test.Title | 
+                        Ngày thi: @DateTime.Now.ToString("dd/MM/yyyy") | Ca thi: 8
+                    </small>
+                </div>
+                <div class="col-md-6 text-end">
+                    <span class="me-3">
+                        <i class="bi bi-clock"></i>
+                        <span id="timer" class="fw-bold fs-5">00:00</span>
+                    </span>
+                    <span class="connection-status me-3">
+                        <i class="bi bi-wifi"></i> <span id="connectionStatus">Đang kết nối</span>
+                    </span>
+                    <button type="button" class="btn btn-warning btn-sm me-2" id="btnSubmitTest">
+                        NỘP BÀI
+                    </button>
+                    <button type="button" class="btn btn-light btn-sm" id="btnFullscreen">
+                        <i class="bi bi-arrows-fullscreen"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sub Header -->
+    <div class="mocktest-subheader">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" id="btnPrevious">
+                        <i class="bi bi-arrow-left"></i> Quay lại
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" id="btnNext">
+                        Tiếp theo <i class="bi bi-arrow-right"></i>
+                    </button>
+                </div>
+                <div>
+                    <span class="me-3">
+                        Số câu đã trả lời: <strong id="answeredCount">@Model.TestAttempt.TotalAnswered</strong>/@Model.Test.TotalQuestions
+                    </span>
+                    <button type="button" class="btn btn-primary btn-sm" id="btnSaveDraft">
+                        <i class="bi bi-save"></i> <span id="saveText">Lưu</span>
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" id="btnRefresh">
+                        <i class="bi bi-arrow-clockwise"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="mocktest-content">
+        <div class="container-fluid h-100">
+            <div class="row h-100">
+                <!-- Left Column - Content Display -->
+                <div class="col-lg-7 mocktest-content-left">
+                    <div class="content-display" id="contentDisplay">
+                        <div class="text-center text-muted py-5">
+                            <i class="bi bi-file-text" style="font-size: 3rem;"></i>
+                            <p class="mt-3">Chọn câu hỏi để xem đề bài</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column - Questions -->
+                <div class="col-lg-5 mocktest-content-right">
+                    <div class="questions-container" id="questionsContainer">
+                        @foreach (var question in Model.Questions)
+                        {
+                            var userAnswer = Model.UserAnswers.FirstOrDefault(ua => ua.QuestionId == question.Id);
+                            var isAnswered = userAnswer?.SelectedAnswer != null;
+                            
+                            <div class="question-item" id="question-@question.QuestionNumber" data-question-id="@question.Id" 
+                                 data-question-number="@question.QuestionNumber" 
+                                 data-group-id="@(question.SharedContentGroupId?.ToString() ?? "null")">
+                                <div class="question-header">
+                                    <span class="question-label">Câu @question.QuestionNumber</span>
+                                    <button type="button" class="btn-bookmark @(userAnswer?.IsBookmarked == true ? "active" : "")" 
+                                            data-question-id="@question.Id">
+                                        <i class="bi bi-bookmark-fill"></i>
+                                    </button>
+                                </div>
+                                <div class="question-text">@question.QuestionText</div>
+                                <div class="question-answers">
+                                    @foreach (var answer in new[] { ('A', question.AnswerA), ('B', question.AnswerB), ('C', question.AnswerC), ('D', question.AnswerD) })
+                                    {
+                                        <div class="form-check">
+                                            <input class="form-check-input answer-radio" type="radio" 
+                                                   name="question_@question.Id" 
+                                                   id="q@(question.Id)_@answer.Item1" 
+                                                   value="@answer.Item1"
+                                                   data-question-id="@question.Id"
+                                                   @(userAnswer?.SelectedAnswer == answer.Item1 ? "checked" : "")>
+                                            <label class="form-check-label" for="q@(question.Id)_@answer.Item1">
+                                                @answer.Item1. @answer.Item2
+                                            </label>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Navigation -->
+    <div class="mocktest-footer">
+        <div class="container-fluid">
+            <div class="question-numbers" id="questionNumbers">
+                @for (int i = 1; i <= Model.Test.TotalQuestions; i++)
+                {
+                    var userAnswer = Model.UserAnswers.FirstOrDefault(ua => ua.Question.QuestionNumber == i);
+                    var isAnswered = userAnswer?.SelectedAnswer != null;
+                    var isBookmarked = userAnswer?.IsBookmarked == true;
+                    
+                    <button type="button" 
+                            class="btn-question-number @(isAnswered ? "answered" : "") @(isBookmarked ? "bookmarked" : "")" 
+                            data-question-number="@i">
+                        @i
+                        @if (isBookmarked)
+                        {
+                            <i class="bi bi-bookmark-fill bookmark-icon"></i>
+                        }
+                    </button>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Submit Confirmation Modal -->
+    <div class="modal fade" id="submitModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Xác nhận nộp bài</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="submitWarning"></p>
+                    <p class="text-danger fw-bold">Bạn có chắc chắn muốn nộp bài?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tiếp tục làm bài</button>
+                    <button type="button" class="btn btn-primary" id="btnConfirmSubmit">Nộp bài</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden Data -->
+    <input type="hidden" id="attemptId" value="@Model.TestAttempt.Id" />
+    <input type="hidden" id="initialTimeRemaining" value="@Model.TimeRemainingSeconds" />
+    <input type="hidden" id="totalQuestions" value="@Model.Test.TotalQuestions" />
+
+    <!-- Content Data (for JavaScript) -->
+    <script id="contentData" type="application/json">
+        @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Questions.Select(q => new {
+            questionNumber = q.QuestionNumber,
+            contentType = q.ContentType.ToString(),
+            contentData = q.ContentData,
+            groupId = q.SharedContentGroupId
+        })))
+    </script>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/mocktest.js" asp-append-version="true"></script>
+</body>
+</html>

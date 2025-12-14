@@ -94,7 +94,7 @@
                             <span class="fw-medium">@subject.SubjectName</span>
                             @if (subject.IsActive)
                             {
-                                <a href="@Url.Action("StartTest", "MockTest", new { subjectCode = subject.SubjectCode })"
+                                <a href="@Url.Action("StartTest", "MockTest", new { testId = subject.TestId })"
                                    class="btn btn-primary btn-sm">
                                     Vào thi
                                 </a>
